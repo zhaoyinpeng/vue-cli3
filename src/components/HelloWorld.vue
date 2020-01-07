@@ -1,58 +1,72 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="ad-list">
+    <p>单列有下划线</p>
+    <scroll-show class="ad" :dataList="adList" hover-color="#b4a078" inhover-color="#000" :hasLine="true"></scroll-show>
+    <p>多列无下划线</p>
+    <scroll-show class="ad" :dataList="adList2" :speed="3000" hover-color="#b4a078" inhover-color="#969696"
+      value-list="subList" value-content="adContent" value-link="adLink"></scroll-show>
   </div>
 </template>
-
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
-</script>
+import ScrollShow from './scrollShow.vue';
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
+export default {
+  components: {
+    'scroll-show': ScrollShow
+  },
+  data() {
+    return {
+      adList2: [
+        {
+          subList: [
+            { adContent: '第1条广告的第1条内容',
+              adLink: 'https://www.baidu.com' },
+            { adContent: '第1条广告的第2条内容',
+              adLink: 'https://www.baidu.com' },
+            { adContent: '第1条广告的第3条内容',
+              adLink: 'https://www.baidu.com' },
+            { adContent: '第1条广告的第4条内容',
+              adLink: 'https://www.baidu.com' }
+          ]
+        },
+        {
+          subList: [
+            { adContent: '第2条广告的第1条内容', adLink: 'https://www.baidu.com' },
+            { adContent: '第2条广告的第2条内容', adLink: 'https://www.baidu.com' },
+            { adContent: '第2条广告的第3条内容', adLink: 'https://www.baidu.com' },
+            { adContent: '第2条广告的第4条内容', adLink: 'https://www.baidu.com' }
+          ]
+        },
+        {
+          subList: [
+            { adContent: '第3条广告的第1条内容', adLink: 'https://www.baidu.com' },
+            { adContent: '第3条广告的第2条内容', adLink: 'https://www.baidu.com' },
+            { adContent: '第3条广告的第3条内容', adLink: 'https://www.baidu.com' },
+            { adContent: '第3条广告的第4条内容', adLink: 'https://www.baidu.com' }
+          ]
+        }
+      ],
+      adList: [
+        { content: '广告内容1', link: 'https://www.baidu.com' },
+        { content: '广告内容2', link: 'https://www.baidu.com' },
+        { content: '广告内容3', link: 'https://www.baidu.com' },
+        { content: '广告内容4', link: 'https://www.baidu.com' },
+        { content: '广告内容5', link: 'https://www.baidu.com' },
+        { content: '广告内容6', link: 'https://www.baidu.com' }
+      ]
+    };
+  }
+};
+</script>
+<style lang="less">
+.ad-list {
+  margin-top: 5px;
+  font-size: 14px;
+  .ad {
+    display: inline-block;
+    white-space: nowrap;
+    margin-right: 5px;
+    font-size: 12px;
+  }
 }
 </style>
