@@ -2,22 +2,21 @@ module.exports = {
   root: true,
   //全局变量
   globals: {
-    L: true,
-    MapBoxGL: true
+    $: true,
+    jquery: true
   },
   env: {
     node: true
   },
-  parser: 'vue-eslint-parser', //一直报错，添加上就ok了
-  // 'extends': [
-  //   'plugin:vue/essential',
-  //   '@vue/standard'
-  // ],
+  'extends': [
+    'plugin:vue/essential',
+    '@vue/standard'
+  ],
   rules: {
     'comma-dangle': 2, //是否允许对象中出现结尾逗号
     'no-cond-assign': 2, //条件语句的条件中不允许出现赋值运算符
     'no-constant-condition': 2, //条件语句的条件中不允许出现恒定不变的量
-    'no-control-regex': 2, //正则表达式中不允许出现控制字符
+    'no-control-regex': 0, //正则表达式中不允许出现控制字符
     'no-dupe-args': 2, //函数定义的时候不允许出现重复的参数
     'no-dupe-keys': 2, //对象中不允许出现重复的键
     'no-duplicate-case': 2, //switch语句中不允许出现重复的case标签

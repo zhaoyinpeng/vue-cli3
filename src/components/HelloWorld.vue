@@ -5,14 +5,16 @@
     <p>多列无下划线</p>
     <scroll-show class="ad" :dataList="adList2" :speed="3000" hover-color="#b4a078" inhover-color="#969696"
       value-list="subList" value-content="adContent" value-link="adLink"></scroll-show>
+      <Proxy/>
   </div>
 </template>
 <script>
 import ScrollShow from './scrollShow.vue';
-
+import Proxy from './proxy';
 export default {
   components: {
-    'scroll-show': ScrollShow
+    'scroll-show': ScrollShow,
+    Proxy
   },
   data() {
     return {

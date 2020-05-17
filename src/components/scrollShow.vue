@@ -120,7 +120,7 @@ export default {
       clearTimeout(this.scrollInterval);
       this.scrollInterval = setTimeout(() => {
         this.animate = true;
-        console.log(123);
+        // console.log(123);
         setTimeout(() => {
           this.list.push(this.list[0]);
           this.list.shift(0);
