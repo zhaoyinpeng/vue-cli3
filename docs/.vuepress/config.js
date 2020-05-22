@@ -1,8 +1,8 @@
 const path = require('path')
 
 module.exports = {
-  title: '广西水质前端开发文档',
-  description: '广西水质前端开发文档',
+  title: 'study',
+  description: 'study',
   head: [
     ['link', {
       rel: 'icon',
@@ -12,7 +12,9 @@ module.exports = {
   themeConfig: {
     sidebar: [
       ['/', '开始'],
-      ['/html5/css_1.md', 'html5']
+      ['/html5/css_1.md', 'html5'],
+      ['/nginx/nginx.md', 'nginx'],
+      ['/前端部署/前端部署.md', '前端部署']
     ],
     sidebarDepth: 2
   },

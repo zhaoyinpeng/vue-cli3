@@ -5,30 +5,41 @@
     <p>多列无下划线</p>
     <scroll-show class="ad" :dataList="adList2" :speed="3000" hover-color="#b4a078" inhover-color="#969696"
       value-list="subList" value-content="adContent" value-link="adLink"></scroll-show>
-      <Proxy/>
+    <Proxy />
+    <Pie3D />
   </div>
 </template>
 <script>
-import ScrollShow from './scrollShow.vue';
-import Proxy from './proxy';
+import ScrollShow from './scrollShow.vue'
+import Proxy from './proxy'
+import Pie3D from './3DPie'
 export default {
   components: {
     'scroll-show': ScrollShow,
-    Proxy
+    Proxy,
+    Pie3D
   },
   data() {
     return {
       adList2: [
         {
           subList: [
-            { adContent: '第1条广告的第1条内容',
-              adLink: 'https://www.baidu.com' },
-            { adContent: '第1条广告的第2条内容',
-              adLink: 'https://www.baidu.com' },
-            { adContent: '第1条广告的第3条内容',
-              adLink: 'https://www.baidu.com' },
-            { adContent: '第1条广告的第4条内容',
-              adLink: 'https://www.baidu.com' }
+            {
+              adContent: '第1条广告的第1条内容',
+              adLink: 'https://www.baidu.com'
+            },
+            {
+              adContent: '第1条广告的第2条内容',
+              adLink: 'https://www.baidu.com'
+            },
+            {
+              adContent: '第1条广告的第3条内容',
+              adLink: 'https://www.baidu.com'
+            },
+            {
+              adContent: '第1条广告的第4条内容',
+              adLink: 'https://www.baidu.com'
+            }
           ]
         },
         {
@@ -56,9 +67,9 @@ export default {
         { content: '广告内容5', link: 'https://www.baidu.com' },
         { content: '广告内容6', link: 'https://www.baidu.com' }
       ]
-    };
+    }
   }
-};
+}
 </script>
 <style lang="less">
 .ad-list {
