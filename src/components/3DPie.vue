@@ -3,14 +3,19 @@
     <svg class="svg" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
       xml:space="preserve" width="700" height="500">
       <filter id="i1" width="150%" height="150%">
-        <feOffset result = "offOut" in = "SourceAlpha" dx = "0" dy = "10"/>
-        <feGaussianBlur result = "blurOut" in = "offOut" stdDeviation = "10"/>
-        <feBlend in = "SourceGraphic" in2 = "blurOut" mode = "normal"/>
+        <feOffset result="offOut" in="SourceAlpha" dx="0" dy="10" />
+        <feGaussianBlur result="blurOut" in="offOut" stdDeviation="10" />
+        <feBlend in="SourceGraphic" in2="blurOut" mode="normal" />
       </filter>
     </svg>
   </div>
 </template>
 <script>
+//Donut3D已满足显示要求
+// import Donut3D from './js/Donut3D'
+//Donut3D.02添加文字
+// import Donut3D from './js/Donut3D.02'
+//Donut3D.03完整版
 import Donut3D from './js/Donut3D.03'
 import * as d3 from 'd3'
 export default {
@@ -69,10 +74,7 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-.svg /deep/ .outerSlice {
-  box-shadow: 10 10 black;
-}
-.svg /deep/ #salesDonut {
-  box-shadow: 10 10 black;
+.svg /deep/ .cursor-pointer {
+  cursor: pointer;
 }
 </style>
