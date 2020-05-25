@@ -14,7 +14,8 @@ module.exports = {
       ['/', '开始'],
       ['/html5/css_1.md', 'html5'],
       ['/nginx/nginx.md', 'nginx'],
-      ['/前端部署/前端部署.md', '前端部署']
+      ['/前端部署/前端部署.md', '前端部署'],
+      ['/正则/正则.md', '正则']
     ],
     sidebarDepth: 2
   },
