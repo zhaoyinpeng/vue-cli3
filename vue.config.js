@@ -1,4 +1,4 @@
-const webpack = require('webpack');
+const webpack = require('webpack')
 module.exports = {
   // 输出文件目录
   outputDir: 'dist',
@@ -59,4 +59,4 @@ module.exports = {
   pluginOptions: {
     // ...
   }
-};
+}
