@@ -8,6 +8,7 @@
 * 
 
 ## dos命令
+* 注意需要cmd中cd到nginx-1.18.0（nginx解压缩目录）
 * start nginx //启用nginx
 * tasklist /fi "imagename eq nginx.exe" //查看任务处理器中的nginx.exe命令
 * nginx -t -c /nging-1.18.0/conf/nginx.conf //检查一下配置文件是否正确，后面是nginx.conf文件的路径
