@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    //简单工厂
+    // 投入不同原料（参数或属性），产生不容的产品（对象）
+    function Factory(name, sex, age) {
+      // 声明一个对象
+      let obj = {}
+      // 给对象添加属性的过程
+      obj.name = name
+      obj.sex = sex
+      obj.age = age
+
+      // 产生一个对象
+      return obj
+    }
+    let lili = Factory('丽丽', '女', 10)
+    console.log(lili)
+
+    //简单工厂原型模式
+    function Person(name, sex, age) {
+      this.name = name
+      this.sex = sex
+      this.age = age
+    }
+    //添加公共方法(公共的，实例之间没有差异)
+    Person.prototype.say = function () {
+      console.log('this is say')
+    }
+    let lili2 = new Person('丽丽2', '女', 10)
+    lili2.say()
+    //不足之处有些实例有某些功能，有些实例没有某些功能，怎么办呢？
+  </script>
+</body>
+
+</html>

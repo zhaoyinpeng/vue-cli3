@@ -1,0 +1,472 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <!--
+  ArcGIS API for JavaScript, https://js.arcgis.com
+  For more information about the draw-line sample, read the original sample description at developers.arcgis.com.
+  https://developers.arcgis.com/javascript/latest/sample-code/draw-line/index.html
+  -->
+  <title>Draw polyline - 4.15</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.15/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+  </style>
+  <script>
+    let view = null
+    let map = null
+    let draw = null
+    let action = null
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/views/draw/Draw",
+      "esri/Graphic",
+      "esri/geometry/geometryEngine",
+
+      'esri/geometry/Point',
+      'esri/geometry/Polyline',
+      'esri/geometry/Polygon'
+    ], function (Map, MapView, Draw, Graphic, geometryEngine, Point, Polyline, Polygon) {
+      map = new Map({
+        basemap: "gray"
+      });
+      let layerViewId = 123
+      view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: 16,
+        id: layerViewId,
+        center: [18.06, 59.34]
+      });
+
+      // add the button for the draw tool
+      view.ui.add("line-button", "top-left");
+
+      draw = new Draw({
+        view: view
+      });
+      // draw polyline button
+      document.getElementById("line-button").onclick = function () {
+        view.graphics.removeAll();
+
+        // creates and returns an instance of PolyLineDrawAction
+        action = draw.create("polyline");
+
+        // focus the view to activate keyboard shortcuts for sketching
+        view.focus();
+
+        // listen polylineDrawAction events to give immediate visual feedback
+        // to users as the line is being drawn on the view.
+        // action.on(
+        //   [
+        //     "vertex-add",
+        //     "vertex-remove",
+        //     "cursor-update",
+        //     "redo",
+        //     "undo",
+        //     "draw-complete"
+        //   ],
+        //   updateVertices
+        // );
+        action.on(['vertex-add', 'vertex-remove', 'cursor-update'], evt => {
+          createPolylineGraphic(evt.vertices)
+        })
+        drawComplete = action.on('draw-complete', evt => {
+          createPolylineGraphic(evt.vertices, 'complete')
+        })
+      };
+      //创建线和点
+      let drawStatus = false
+
+      function createPolylineGraphic(vertices, type) {
+        // console.log('vertices', vertices)
+        view.graphics.removeAll()
+        let polyline = new Polyline({
+          paths: vertices,
+          spatialReference: view.spatialReference
+        })
+        let graphic = new Graphic({
+          geometry: polyline,
+          symbol: {
+            type: 'simple-line',
+            color: [255, 116, 3],
+            width: 3,
+            cap: 'round',
+            join: 'round'
+          }
+        })
+        view.graphics.add(graphic)
+        let symbol = {
+          type: 'simple-marker',
+          color: [255, 255, 255],
+          size: 6,
+          outline: {
+            color: [255, 0, 0],
+            width: 1.5
+          }
+        }
+        let path = []
+        if (type === 'complete') {
+          console.log('完成')
+          drawStatus = false
+          addCursorEvent()
+          addDelectEvent()
+          addDragEvent()
+          // this.currentLocationIndex = -1
+        } else {
+          drawStatus = true
+        }
+        for (let i = 0; i < vertices.length; i++) {
+          let point = {
+            type: 'point',
+            x: vertices[i][0],
+            y: vertices[i][1],
+            spatialReference: view.spatialReference
+          }
+          let arr = []
+          arr.push(vertices[i][0])
+          arr.push(vertices[i][1])
+          path.push(arr)
+          let line = new Polyline({
+            hasZ: false,
+            hasM: true,
+            paths: path,
+            spatialReference: view.spatialReference
+          })
+          let dislen = null
+          let unit = ''
+          if (view.scale > 5000) {
+            dislen = geometryEngine.planarLength(
+              line,
+              'kilometers'
+            )
+            unit = '千米'
+          } else {
+            dislen = geometryEngine.planarLength(
+              line,
+              'meters'
+            )
+            unit = '米'
+          }
+          let textSymbol = {
+            type: 'text',
+            color: 'white',
+            haloColor: 'black',
+            haloSize: '5px',
+            text: Math.abs(Math.round(dislen * 1000) / 1000) + unit,
+            xoffset: '20px',
+            yoffset: '20px',
+            font: {
+              size: 12,
+              family: 'sans-serif',
+              weight: 'bold'
+            }
+          }
+          let textGraphics = new Graphic({
+            geometry: point,
+            symbol: textSymbol
+          })
+          let Graphics = new Graphic({
+            geometry: point,
+            symbol: symbol,
+            attributes: {
+              cursorPointer: true,
+              deletePoint: true,
+              dragPoint: true
+            }
+          })
+          view.graphics.add(Graphics)
+          if (i === vertices.length - 1) {
+            view.graphics.add(textGraphics)
+          }
+        }
+      }
+
+      //移入动画效果
+      let cursorPointerEvent = null //移入事件
+      let currentHoverGraphic = null //当前移入的graphic
+      let cursorSymbol = {
+        type: 'simple-marker',
+        color: [255, 255, 255],
+        size: 10,
+        outline: {
+          color: [255, 0, 0],
+          width: 1.5
+        }
+      }
+      let defaultSymbol = {
+        type: 'simple-marker',
+        color: [255, 255, 255],
+        size: 6,
+        outline: {
+          color: [255, 0, 0],
+          width: 1.5
+        }
+      }
+
+      function addCursorEvent() {
+        if (!cursorPointerEvent) {
+          cursorPointerEvent = view.on('pointer-move', (evt) => {
+            if (drawStatus) {
+              return
+            }
+            view.hitTest(evt).then((response) => {
+              if (response.results.length) {
+                let res = response.results.filter((item) => {
+                  return item.graphic.layer && item.graphic.layer.id === layerViewId
+                })[0]
+                // debugger
+                // console.log('移入', res)
+                if (res && res.graphic.attributes && res.graphic.attributes.cursorPointer) {
+                  document.getElementsByTagName('body')[0].style.cursor = 'pointer'
+                  res.graphic.symbol = cursorSymbol
+                  currentHoverGraphic = res.graphic
+                }
+              } else {
+                if (currentHoverGraphic) {
+                  currentHoverGraphic.symbol = defaultSymbol
+                  currentHoverGraphic = null
+                }
+                document.getElementsByTagName('body')[0].style.cursor = 'default'
+              }
+            })
+          })
+        }
+      }
+
+      //单击删除重绘测距
+      let deleteEvent = null //删除事件
+      function addDelectEvent() {
+        if (!deleteEvent) {
+          deleteEvent = view.on('click', (evt) => {
+            if (drawStatus) {
+              return
+            }
+            view.hitTest(evt).then((response) => {
+              if (response.results.length) {
+                let res = response.results.filter((item) => {
+                  return item.graphic.layer.id === layerViewId
+                })[0]
+                // debugger
+                if (res && res.graphic.attributes && res.graphic.attributes.deletePoint) {
+                  console.log(res.graphic)
+                  res.graphic.layer.graphics.remove(res.graphic)
+                  view.graphics.forEach(item => console.log(item))
+                  let pointList = view.graphics.filter((item) => {
+                    return item.attributes && item.attributes.dragPoint
+                  })
+                  let vertices = []
+                  pointList.forEach(item => {
+                    vertices.push([item.geometry.x, item.geometry.y])
+                  })
+                  console.log(vertices)
+                  createPolylineGraphic(vertices, 'complete')
+                }
+              }
+            })
+          })
+        }
+      }
+
+      //移动要素
+      let mouseDragEvent = null //移动事件
+      let currentDragPoint = null //当前拖拽点
+      let tempGraphicLength = 0
+
+      function addDragEvent() {
+        if (!mouseDragEvent) {
+          //开始拖拽绘制圆
+          mouseDragEvent = view.on('drag', (evt) => {
+            // console.log('drag', evt)
+            if (drawStatus) {
+              return
+            }
+            let pointList = view.graphics.filter((item) => {
+              return item.attributes && item.attributes.dragPoint
+            })
+            tempGraphicLength = pointList.length
+            if (evt.action === 'start') {
+              view.hitTest(evt).then(resp => {
+                if (resp.results[0] && resp.results[0].graphic && resp.results[0].graphic.attributes.dragPoint) {
+                  evt.stopPropagation();
+                  // if the hitTest returns a point graphic, set dragginGraphic
+                  currentDragPoint = resp.results[0].graphic;
+                }
+              });
+            } else if (evt.action === 'update') {
+              // on drag update events, only continue if a currentDragPoint is set
+              if (currentDragPoint) {
+                evt.stopPropagation();
+                // if there is a tempGraphic, remove it
+                currentDragPoint.geometry = view.toMap(evt);
+                //重绘计算
+                // throttle(function () {
+                let pointList = view.graphics.filter((item) => {
+                  return item.attributes && item.attributes.dragPoint
+                })
+                let vertices = []
+                pointList.forEach(item => {
+                  vertices.push([item.geometry.x, item.geometry.y])
+                })
+                console.log(vertices)
+                reDrawLineAndText(vertices)
+                // }, 10)()
+              }
+
+            } else if (evt.action === 'end') {
+              // on drag end, continue only if there is a currentDragPoint
+              if (currentDragPoint) {
+                evt.stopPropagation();
+                // reset vars
+                currentDragPoint = null //当前拖拽点
+                tempGraphicLength = 0
+                //重绘计算
+                let pointList = view.graphics.filter((item) => {
+                  return item.attributes && item.attributes.dragPoint
+                })
+                let vertices = []
+                pointList.forEach(item => {
+                  vertices.push([item.geometry.x, item.geometry.y])
+                })
+                console.log(vertices)
+                reDrawLineAndText(vertices)
+                document.getElementsByTagName('body')[0].style.cursor = 'default'
+              }
+            }
+          })
+        }
+      }
+
+      //清除line和text重新画
+      function reDrawLineAndText(vertices) {
+        // 清除line和text
+        view.graphics.forEach(item => {
+          if (!item.attributes || !item.attributes.dragPoint) {
+            view.graphics.remove(item)
+          }
+        })
+        let polyline = new Polyline({
+          paths: vertices,
+          spatialReference: view.spatialReference
+        })
+        let graphic = new Graphic({
+          geometry: polyline,
+          symbol: {
+            type: 'simple-line',
+            color: [255, 116, 3],
+            width: 3,
+            zIndex: 1,
+            cap: 'round',
+            join: 'round'
+          }
+        })
+        view.graphics.add(graphic)
+        let symbol = {
+          type: 'simple-marker',
+          color: [255, 255, 255],
+          size: 6,
+          zIndex: 10,
+          outline: {
+            color: [255, 0, 0],
+            width: 1.5
+          }
+        }
+        let path = []
+        for (let i = 0; i < vertices.length; i++) {
+          let point = {
+            type: 'point',
+            x: vertices[i][0],
+            y: vertices[i][1],
+            spatialReference: view.spatialReference
+          }
+          let arr = []
+          arr.push(vertices[i][0])
+          arr.push(vertices[i][1])
+          path.push(arr)
+          let line = new Polyline({
+            hasZ: false,
+            hasM: true,
+            paths: path,
+            spatialReference: view.spatialReference
+          })
+          let dislen = null
+          let unit = ''
+          if (view.scale > 5000) {
+            dislen = geometryEngine.planarLength(
+              line,
+              'kilometers'
+            )
+            unit = '千米'
+          } else {
+            dislen = geometryEngine.planarLength(
+              line,
+              'meters'
+            )
+            unit = '米'
+          }
+          let textSymbol = {
+            type: 'text',
+            color: 'white',
+            haloColor: 'black',
+            haloSize: '5px',
+            text: Math.abs(Math.round(dislen * 1000) / 1000) + unit,
+            xoffset: '20px',
+            yoffset: '20px',
+            font: {
+              size: 12,
+              family: 'sans-serif',
+              weight: 'bold'
+            }
+          }
+          let textGraphics = new Graphic({
+            geometry: point,
+            symbol: textSymbol
+          })
+          if (i === vertices.length - 1) {
+            view.graphics.add(textGraphics)
+          }
+        }
+      }
+
+    });
+
+    //节流
+    function throttle(func, wait) {
+      let previous = 0;
+      return function () {
+        let now = Date.now();
+        let context = this;
+        let args = arguments;
+        if (now - previous > wait) {
+          func.apply(context, args);
+          previous = now;
+        }
+      }
+    }
+
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="line-button" class="esri-widget esri-widget--button
+        esri-interactive" title="Draw polyline">
+      <span class="esri-icon-polyline"></span>
+    </div>
+  </div>
+</body>
+
+</html>

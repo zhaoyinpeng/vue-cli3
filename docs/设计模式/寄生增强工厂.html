@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+
+<body>
+  <script>
+    //简单工厂原型模式
+    function Person(name, sex, age) {
+      this.name = name
+      this.sex = sex
+      this.age = age
+    }
+    //添加公共方法(公共的，实例之间没有差异)
+    Person.prototype.say = function () {
+      console.log('this is say')
+    }
+    //寄生增强工厂
+    // 寄生依赖简单工厂原型模式，增强是比原来多了一些东西，添加一些私有方法，在原来基础上
+    function Factory(name, sex, age) {
+      // 声明一个对象
+      let obj = new Person(name, sex, age)
+      //添加自定义的属性和方法
+      obj.hobby = 'play'
+      obj.show = function(){
+        console.log('this is show')
+      }
+      // 产生一个对象
+      return obj
+    }
+    let lili3 = Factory('丽丽3', '女', 10)
+    lili3.say()
+    console.log(lili3)
+  </script>
+</body>
+
+</html>
