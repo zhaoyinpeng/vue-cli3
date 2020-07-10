@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>构造函数模式</title>
+</head>
+
+<body>
+
+  <script>
+    // 构造函数用于创建特定类型的对象,构造函数可以接受参数以便第一次创建对象的时候设置对象的成员值。你可以自定义自己的构造函数，然后在里面声明自定义的成员值
+    //注意
+    // 1.构造函数注意大写
+    // 2.注意new的成本(继承)
+
+    //案例
+    // 1. js开发中使用单引号
+    // 2. js里构造函数比较特殊的地方new
+    // 3. 相当于按照类的方式来写的
+    function Zaomen() {
+      //健壮性代码
+      if(!(this instanceof Zaomen)){
+        return new Zaomen()
+      }
+      this.suo = '普通'
+      this.huawen = '普通'
+      this.creat = function () {
+        return this.suo + ' ' + this.huawen
+      }
+    }
+    // let xiaozhang = Zaomen()
+    // alert(xiaozhang.creat()) //报错 注意this指针问题，必须要用new将Zaomen中的this指针指向xiaozhang，如果要用这种就需要加上new
+    let xiaozhang =new Zaomen()
+    alert(xiaozhang.creat()) //报错 注意this指针问题，必须要用new将Zaomen中的this指针指向xiaozhang，如果要用这种就需要加上new
+  </script>
+</body>
+
+</html>

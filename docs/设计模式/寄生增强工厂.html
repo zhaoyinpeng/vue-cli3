@@ -27,7 +27,7 @@
       let obj = new Person(name, sex, age)
       //添加自定义的属性和方法
       obj.hobby = 'play'
-      obj.show = function(){
+      obj.show = function () {
         console.log('this is show')
       }
       // 产生一个对象
@@ -36,6 +36,24 @@
     let lili3 = Factory('丽丽3', '女', 10)
     lili3.say()
     console.log(lili3)
+
+    //真是案例 AjaxHander相当于用户，他请求XMLHttpFactory工厂，工厂内部根据不同环境返回不同对象。从而给客户返回一个XMLHttp请求方法
+    let XMLHttpFactory = function () {
+
+    }
+    XMLHttpFactory.createXMLHttp = function () {
+      let XMLHttp = null
+      if (window.XMLHttpRequest) {
+        XMLHttp = new XMLHttpRequest()
+      } else if (window.ActiveXObjeect) {
+        XMLHttp = new ActiveXObject('Microsoft.XMLHttp')
+      }
+      return XMLHttp
+    }
+    let AjaxHander = function () {
+      let XMLHttp = XMLHttpFactory.createXMLHttp()
+    }
+
   </script>
 </body>
 

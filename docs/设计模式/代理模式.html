@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>代理模式</title>
+</head>
+
+<body>
+  <script>
+    // 代理：帮助别人做事，GoF对代理模式的定义如下：
+    // 代理模式（proxy)，为其他对象提供一种代理以控制对这个对象的访问。代理模式是的代理对象控制具体对象的应用。代理几乎可以使任何对象：文件，资源，内存中的对象，或者是一些难以复制的东西。
+    //拟物化：中介，处理日报的秘书，中间沟通代理
+    // 为卖房的人提供一个代理，让中介提供一种代理以控制对卖房人的访问（代理控制具体对象的访问），买房人直接联系中介
+    //1. 远程代理（一个对象讲不通空间的对象进行局部代理）
+    // 2. 虚拟代理（根据需要创建开销很大的对象如渲染页面暂时用占位代替真图）
+    // 3. 安全代理（控制访问权限）
+    // 4. 智能指引
+
+    // 实例
+    // 代理模式需要3方
+    // 1.买方
+    function maijia(params) {
+      this.name = 'xiaoming'
+    }
+    // 2.中介
+    function zhongjie(params) {
+
+    }
+    zhongjie.prototype.maifang = function () {
+      new fangdong(new maijia()).shouqian('20$')
+    }
+    // 3.房东
+    function fangdong(maijia) {
+      this.maijia_name = maijia.name
+      this.shouqian = function (money) {
+        alert('收到了' + this.maijia_name + 'de' + money)
+      }
+    }
+    (new zhongjie).maifang()
+
+  </script>
+</body>
+
+</html>
