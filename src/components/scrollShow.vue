@@ -69,69 +69,70 @@ export default {
       adHoverColor: 'color: ' + this.hoverColor,
       adinHoverColor: 'color: ' + this.inhoverColor,
       scrollInterval: null
-    };
+    }
   },
   created() {
-    this.list = this.dataList;
+    this.list = this.dataList
     // 替换数组名
-    this.changeData();
+    this.changeData()
     if (this.list && this.list.length === 1) {
-      this.list = this.list.concat(this.list);
+      this.list = this.list.concat(this.list)
     }
-    this.scroll();
+    this.scroll()
+    console.log(window.abc)
   },
   methods: {
     changeData() {
       this.list.map(res => {
         if (res[this.valueList]) {
           if (this.valueList !== 'list') {
-            res.list = res[this.valueList];
-            delete res[this.valueList];
+            res.list = res[this.valueList]
+            delete res[this.valueList]
             res.list.map(subRes => {
               if (this.valueContent !== 'content') {
-                subRes.content = subRes[this.valueContent];
-                delete subRes[this.valueContent];
+                subRes.content = subRes[this.valueContent]
+                delete subRes[this.valueContent]
               }
               if (this.valueLink !== 'link') {
-                subRes.link = subRes[this.valueLink];
-                delete subRes[this.valueLink];
+                subRes.link = subRes[this.valueLink]
+                delete subRes[this.valueLink]
               }
-            });
+            })
           }
         } else {
           if (this.valueContent !== 'content') {
-            res.content = res[this.valueContent];
-            delete res[this.valueContent];
+            res.content = res[this.valueContent]
+            delete res[this.valueContent]
           }
           if (this.valueLink !== 'link') {
-            res.link = res[this.valueLink];
-            delete res[this.valueLink];
+            res.link = res[this.valueLink]
+            delete res[this.valueLink]
           }
         }
-      });
+      })
     },
     mouseOver(item) {
-      this.$set(item, 'isActive', 'true');
+      this.$set(item, 'isActive', 'true')
     },
     mouseLeave(item) {
-      item.isActive = false;
+      item.isActive = false
     },
     scroll() {
-      clearTimeout(this.scrollInterval);
+      clearTimeout(this.scrollInterval)
       this.scrollInterval = setTimeout(() => {
-        this.animate = true;
+        this.animate = true
         // console.log(123);
         setTimeout(() => {
-          this.list.push(this.list[0]);
-          this.list.shift(0);
-          this.animate = false;
-        }, this.speed / 2);
-        this.scroll();
-      }, this.speed);
+          this.list.push(this.list[0])
+          this.list.shift(0)
+          this.animate = false
+        }, this.speed / 2)
+        this.scroll()
+      }, this.speed)
     }
   }
 
-};
+}
 </script>
 <style lang="less">
 .scroll-show-contain {

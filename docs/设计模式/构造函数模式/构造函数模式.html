@@ -31,7 +31,7 @@
         return this.suo + ' ' + this.huawen
       }
     }
-    // let xiaozhang = Zaomen()
+    // let xiaozhang = Zaomen() //!!!!!!!!!!!!!!!这里不通过new定义的话this.suo、this.huawen和this.creat就相当于绑定在了window上
     // alert(xiaozhang.creat()) //报错 注意this指针问题，必须要用new将Zaomen中的this指针指向xiaozhang，如果要用这种就需要加上new
     let xiaozhang =new Zaomen()
     alert(xiaozhang.creat()) //报错 注意this指针问题，必须要用new将Zaomen中的this指针指向xiaozhang，如果要用这种就需要加上new

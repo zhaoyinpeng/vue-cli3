@@ -38,8 +38,9 @@
 
       'esri/geometry/Point',
       'esri/geometry/Polyline',
-      'esri/geometry/Polygon'
-    ], function (Map, MapView, Draw, Graphic, geometryEngine, Point, Polyline, Polygon) {
+      'esri/geometry/Polygon',
+      'esri/symbols/PictureMarkerSymbol'
+    ], function (Map, MapView, Draw, Graphic, geometryEngine, Point, Polyline, Polygon, PictureMarkerSymbol) {
       map = new Map({
         basemap: "gray"
       });
@@ -58,6 +59,8 @@
       draw = new Draw({
         view: view
       });
+
+      let historyArr = []
       // draw polyline button
       document.getElementById("line-button").onclick = function () {
         view.graphics.removeAll();
@@ -81,10 +84,19 @@
         //   ],
         //   updateVertices
         // );
-        action.on(['vertex-add', 'vertex-remove', 'cursor-update'], evt => {
+        action.on(['vertex-remove', 'cursor-update'], evt => {
+          // historyArr.push(evt.vertices)
+          console.log('vertex-remove,cursor-update')
+          createPolylineGraphic(evt.vertices)
+        })
+        action.on(['vertex-add'], evt => {
+          historyArr.push(deepClone(evt.vertices))
+          console.log('vertex-add')
           createPolylineGraphic(evt.vertices)
         })
         drawComplete = action.on('draw-complete', evt => {
+          historyArr.push(deepClone(evt.vertices))
+          console.log(historyArr)
           createPolylineGraphic(evt.vertices, 'complete')
         })
       };
@@ -109,15 +121,24 @@
           }
         })
         view.graphics.add(graphic)
+        // let symbol = {
+        //   type: 'simple-marker',
+        //   color: [255, 255, 255],
+        //   size: 6,
+        //   outline: {
+        //     color: [255, 0, 0],
+        //     width: 1.5
+        //   }
+        // }
         let symbol = {
-          type: 'simple-marker',
-          color: [255, 255, 255],
-          size: 6,
-          outline: {
-            color: [255, 0, 0],
-            width: 1.5
-          }
+          type: "picture-marker", // autocasts as new PictureMarkerSymbol()
+          // url: "https://static.arcgis.com/images/Symbols/Shapes/BlackStarLargeB.png",
+          url: require('./1.jpg'),
+          width: "64px",
+          height: "64px"
         }
+        // let symbol = new PictureMarkerSymbol(
+        //   'https://himg.bdimg.com/sys/portraitn/item/4a3268617070797869616f79696e7a69f041', 50, 50)
         let path = []
         if (type === 'complete') {
           console.log('完成')
@@ -299,21 +320,24 @@
             })
             tempGraphicLength = pointList.length
             if (evt.action === 'start') {
+              console.log('start')
               view.hitTest(evt).then(resp => {
-                if (resp.results[0] && resp.results[0].graphic && resp.results[0].graphic.attributes.dragPoint) {
+                if (resp.results[0] && resp.results[0].graphic && resp.results[0].graphic.attributes
+                  .dragPoint) {
                   evt.stopPropagation();
                   // if the hitTest returns a point graphic, set dragginGraphic
                   currentDragPoint = resp.results[0].graphic;
+                  currentDragPoint.attributes.isActive = true
                 }
               });
             } else if (evt.action === 'update') {
+              console.log('update')
               // on drag update events, only continue if a currentDragPoint is set
               if (currentDragPoint) {
                 evt.stopPropagation();
                 // if there is a tempGraphic, remove it
                 currentDragPoint.geometry = view.toMap(evt);
                 //重绘计算
-                // throttle(function () {
                 let pointList = view.graphics.filter((item) => {
                   return item.attributes && item.attributes.dragPoint
                 })
@@ -323,12 +347,13 @@
                 })
                 console.log(vertices)
                 reDrawLineAndText(vertices)
-                // }, 10)()
               }
 
             } else if (evt.action === 'end') {
+              console.log('end')
               // on drag end, continue only if there is a currentDragPoint
               if (currentDragPoint) {
+                // view.graphics.remove(currentDragPoint)
                 evt.stopPropagation();
                 // reset vars
                 currentDragPoint = null //当前拖拽点
@@ -342,7 +367,8 @@
                   vertices.push([item.geometry.x, item.geometry.y])
                 })
                 console.log(vertices)
-                reDrawLineAndText(vertices)
+                reDrawLineAndText(vertices, 'end')
+                // historyArr.push(deepClone(vertices))
                 document.getElementsByTagName('body')[0].style.cursor = 'default'
               }
             }
@@ -351,13 +377,25 @@
       }
 
       //清除line和text重新画
-      function reDrawLineAndText(vertices) {
+      function reDrawLineAndText(vertices, status) {
         // 清除line和text
-        view.graphics.forEach(item => {
-          if (!item.attributes || !item.attributes.dragPoint) {
-            view.graphics.remove(item)
+        let currentDragPointIndex
+        //过滤去全部点
+        let pointList = view.graphics.filter(graphic => graphic.attributes)
+        currentDragPointIndex = pointList.findIndex((item, index) => item.attributes.isActive)
+        // for (let j = view.graphics.length; j >= 0; j++) {
+        //   const graphic = view.graphics[j];
+        //   if (!graphic.attributes || !graphic.attributes.isActive) {
+        //     view.graphics.remove(graphic)
+        //   }
+        // }
+        //清除线
+        view.graphics.forEach(graphic => {
+          if (!graphic.attributes || !graphic.attributes.dragPoint) {
+            view.graphics.remove(graphic)
           }
         })
+        //重新绘制线
         let polyline = new Polyline({
           paths: vertices,
           spatialReference: view.spatialReference
@@ -368,7 +406,6 @@
             type: 'simple-line',
             color: [255, 116, 3],
             width: 3,
-            zIndex: 1,
             cap: 'round',
             join: 'round'
           }
@@ -378,84 +415,126 @@
           type: 'simple-marker',
           color: [255, 255, 255],
           size: 6,
-          zIndex: 10,
           outline: {
             color: [255, 0, 0],
             width: 1.5
           }
         }
-        let path = []
-        for (let i = 0; i < vertices.length; i++) {
-          let point = {
-            type: 'point',
-            x: vertices[i][0],
-            y: vertices[i][1],
-            spatialReference: view.spatialReference
-          }
-          let arr = []
-          arr.push(vertices[i][0])
-          arr.push(vertices[i][1])
-          path.push(arr)
-          let line = new Polyline({
-            hasZ: false,
-            hasM: true,
-            paths: path,
-            spatialReference: view.spatialReference
-          })
-          let dislen = null
-          let unit = ''
-          if (view.scale > 5000) {
-            dislen = geometryEngine.planarLength(
-              line,
-              'kilometers'
-            )
-            unit = '千米'
-          } else {
-            dislen = geometryEngine.planarLength(
-              line,
-              'meters'
-            )
-            unit = '米'
-          }
-          let textSymbol = {
-            type: 'text',
-            color: 'white',
-            haloColor: 'black',
-            haloSize: '5px',
-            text: Math.abs(Math.round(dislen * 1000) / 1000) + unit,
-            xoffset: '20px',
-            yoffset: '20px',
-            font: {
-              size: 12,
-              family: 'sans-serif',
-              weight: 'bold'
+        //重新非拖动的圆
+        // view.graphics.forEach(graphic => {
+        //   if (graphic.attributes && graphic.attributes.dragPoint) {
+        //     graphic.symbol = symbol
+        //   }
+        // })
+        // view.graphics.forEach(graphic => {
+        //   if (graphic.attributes && graphic.attributes.dragPoint) {
+        //     let copyGraphic = graphic.clone()
+        //     view.graphics.remove(graphic)
+        //     view.graphics.add(copyGraphic)
+        //   }
+        // })
+
+        if (status === 'end') {
+          let path = []
+          for (let i = 0; i < vertices.length; i++) {
+            let point = {
+              type: 'point',
+              x: vertices[i][0],
+              y: vertices[i][1],
+              spatialReference: view.spatialReference
+            }
+            // if (i !== currentDragPointIndex) {
+            //   let Graphics = new Graphic({
+            //     geometry: point,
+            //     symbol: symbol,
+            //     attributes: {
+            //       cursorPointer: true,
+            //       deletePoint: true,
+            //       dragPoint: true
+            //     }
+            //   })
+            //   view.graphics.add(Graphics)
+            // }
+            let arr = []
+            arr.push(vertices[i][0])
+            arr.push(vertices[i][1])
+            path.push(arr)
+            let line = new Polyline({
+              hasZ: false,
+              hasM: true,
+              paths: path,
+              spatialReference: view.spatialReference
+            })
+            let dislen = null
+            let unit = ''
+            if (view.scale > 5000) {
+              dislen = geometryEngine.planarLength(
+                line,
+                'kilometers'
+              )
+              unit = '千米'
+            } else {
+              dislen = geometryEngine.planarLength(
+                line,
+                'meters'
+              )
+              unit = '米'
+            }
+            let textSymbol = {
+              type: 'text',
+              color: 'white',
+              haloColor: 'black',
+              haloSize: '5px',
+              text: Math.abs(Math.round(dislen * 1000) / 1000) + unit,
+              xoffset: '20px',
+              yoffset: '20px',
+              font: {
+                size: 12,
+                family: 'sans-serif',
+                weight: 'bold'
+              }
+            }
+            if (i === vertices.length - 1) {
+              let textGraphics = new Graphic({
+                geometry: point,
+                symbol: textSymbol
+              })
+              view.graphics.add(textGraphics)
             }
           }
-          let textGraphics = new Graphic({
-            geometry: point,
-            symbol: textSymbol
-          })
-          if (i === vertices.length - 1) {
-            view.graphics.add(textGraphics)
+        }
+      }
+      let backDom = document.getElementById('back')
+      backDom.onclick = function (e) {
+        e.stopPropagation()
+        if (historyArr.length > 0) {
+          createPolylineGraphic(historyArr[historyArr.length - 1])
+          historyArr.length = historyArr.length - 1
+          if (drawStatus) {
+            action.undo()
           }
         }
       }
 
-    });
-
-    //节流
-    function throttle(func, wait) {
-      let previous = 0;
-      return function () {
-        let now = Date.now();
-        let context = this;
-        let args = arguments;
-        if (now - previous > wait) {
-          func.apply(context, args);
-          previous = now;
+      function deepClone(o) {
+        let type = typeof o
+        if (type == "string" || type == "number" || type == "boolean" || type == "undefined") {
+          return o
+        } else if (Array.isArray(o)) {
+          let _arr = []
+          for (let i = 0; i < o.length; i++) {
+            _arr.push(deepClone(o[i]))
+          }
+          return _arr
+        } else if (type == 'object') {
+          let _o = {}
+          for (const key in o) {
+            _o[key] = deepClone(o[key])
+          }
+          return _o
         }
       }
-    }
+    })
 
   </script>
 </head>
@@ -466,6 +545,7 @@
         esri-interactive" title="Draw polyline">
       <span class="esri-icon-polyline"></span>
     </div>
+    <span id="back">回退</span>
   </div>
 </body>
 
