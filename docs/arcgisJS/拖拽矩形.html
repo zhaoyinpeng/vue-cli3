@@ -124,7 +124,7 @@
           clickEvent.remove()
           clickEvent = null
         }
-        if(mouseWheelEvent){
+        if (mouseWheelEvent) {
           mouseWheelEvent.remove()
           mouseWheelEvent = null
         }
@@ -147,13 +147,14 @@
         const graphic = event.graphics[0];
         graphic.symbol = activeSymbol
         if (event.toolEventInfo && event.toolEventInfo.type === "move-stop") {
-          sketchViewModel.complete();
+          // sketchViewModel.complete();
         } else if (event.state === "complete") {
-          sketchViewModel.update([graphic], {
-            tool: "move"
-          });
+          // sketchViewModel.update([graphic], {
+          //   tool: "move"
+          // });
           //获取extent
           console.log(graphic.geometry.extent)
+          console.log('complete', sketchViewModel.state)
         }
       }
       // This function is called when a user clicks on the view.
@@ -163,9 +164,11 @@
         clickEvent = view.on("click", function (event) {
           // check if the sketch's state active if it is then that means
           // the graphic is already being updated, no action required.
+          console.log('click1', sketchViewModel.state)
           if (sketchViewModel.state === "active") {
             return;
           }
+          console.log('click2', sketchViewModel.state)
           view.hitTest(event).then(function (response) {
             var results = response.results;
             // Check if the new development graphic was clicked and pass
@@ -184,6 +187,8 @@
                 sketchViewModel && sketchViewModel.complete();
               }
             });
+            sketchViewModel && sketchViewModel.complete();
+            console.log('click3', sketchViewModel.state)
           });
         });
       }
@@ -195,7 +200,7 @@
        * @params height矩形高度px
        * @params isInit 是否为初始化渲染
        */
-      function addGraphics(width = 500, height = 500, isInit = true) {
+      function addGraphics(width = 200, height = 200, isInit = true) {
         let vertices = []
         let rectangleLeftBottom, rectangleLeftTop, rectangleRightTop, rectangleRightBottom
         if (!isInit && newDevelopmentGraphic) {

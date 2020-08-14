@@ -22,6 +22,13 @@
       margin: 0;
       padding: 0;
     }
+    .span{
+      display: inline-block;
+      width: 100px;
+      height: 30x;
+      border: 1px solid #e3493c;
+      margin: 10px 10px;
+    }
 
   </style>
   <script>
@@ -84,17 +91,17 @@
         //   ],
         //   updateVertices
         // );
-        action.on(['vertex-remove', 'cursor-update'], evt => {
+        window.drawUpdate = action.on(['vertex-remove', 'cursor-update'], evt => {
           // historyArr.push(evt.vertices)
           console.log('vertex-remove,cursor-update')
           createPolylineGraphic(evt.vertices)
         })
-        action.on(['vertex-add'], evt => {
+        window.drawAdd = action.on(['vertex-add'], evt => {
           historyArr.push(deepClone(evt.vertices))
           console.log('vertex-add')
           createPolylineGraphic(evt.vertices)
         })
-        drawComplete = action.on('draw-complete', evt => {
+        window.drawComplete = action.on('draw-complete', evt => {
           historyArr.push(deepClone(evt.vertices))
           console.log(historyArr)
           createPolylineGraphic(evt.vertices, 'complete')
@@ -121,22 +128,22 @@
           }
         })
         view.graphics.add(graphic)
-        // let symbol = {
-        //   type: 'simple-marker',
-        //   color: [255, 255, 255],
-        //   size: 6,
-        //   outline: {
-        //     color: [255, 0, 0],
-        //     width: 1.5
-        //   }
-        // }
         let symbol = {
-          type: "picture-marker", // autocasts as new PictureMarkerSymbol()
-          // url: "https://static.arcgis.com/images/Symbols/Shapes/BlackStarLargeB.png",
-          url: require('./1.jpg'),
-          width: "64px",
-          height: "64px"
+          type: 'simple-marker',
+          color: [255, 255, 255],
+          size: 6,
+          outline: {
+            color: [255, 0, 0],
+            width: 1.5
+          }
         }
+        // let symbol = {
+        //   type: "picture-marker", // autocasts as new PictureMarkerSymbol()
+        //   // url: "https://static.arcgis.com/images/Symbols/Shapes/BlackStarLargeB.png",
+        //   url: require('./1.jpg'),
+        //   width: "64px",
+        //   height: "64px"
+        // }
         // let symbol = new PictureMarkerSymbol(
         //   'https://himg.bdimg.com/sys/portraitn/item/4a3268617070797869616f79696e7a69f041', 50, 50)
         let path = []
@@ -534,6 +541,44 @@
           return _o
         }
       }
+      
+      //取消绑定
+      document.getElementById('over').onclick = function (e) {
+        e.stopPropagation()
+        // action.complete()
+        if(action){
+          console.log('complete')
+          action.complete()
+          action = null
+        }
+        if(window.drawUpdate){
+          window.drawUpdate.remove()
+          window.drawAdd.remove()
+          window.drawComplete.remove()
+          window.drawUpdate = null
+          window.drawAdd = null
+          window.drawComplete = null
+        }
+        if(mouseDragEvent){
+          mouseDragEvent.remove()
+          mouseDragEvent = null
+        }
+        if(cursorPointerEvent){
+          cursorPointerEvent.remove()
+          cursorPointerEvent = null
+        }
+        if(deleteEvent){
+          deleteEvent.remove()
+          deleteEvent = null
+        }
+        
+        view.graphics.removeAll();
+        // action.complete()
+        // if (action.canUndo()) {
+        //   action.undo();
+        // }
+      }
+
     })
 
   </script>
@@ -545,7 +590,8 @@
         esri-interactive" title="Draw polyline">
       <span class="esri-icon-polyline"></span>
     </div>
-    <span id="back">回退</span>
+    <span class="span" id="back">回退</span>
+    <span class="span" id="over">结束</span>
   </div>
 </body>
 
