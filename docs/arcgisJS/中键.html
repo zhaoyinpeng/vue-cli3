@@ -1,0 +1,72 @@
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+  <!--
+  ArcGIS API for JavaScript, https://js.arcgis.com
+  For more information about the draw-line sample, read the original sample description at developers.arcgis.com.
+  https://developers.arcgis.com/javascript/latest/sample-code/draw-line/index.html
+  -->
+  <title>Draw polyline - 4.15</title>
+
+  <link rel="stylesheet" href="https://js.arcgis.com/4.15/esri/themes/light/main.css" />
+  <script src="https://js.arcgis.com/4.15/"></script>
+
+  <style>
+    html,
+    body,
+    #viewDiv {
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+  </style>
+  <script>
+    require([
+      "esri/Map",
+      "esri/views/MapView",
+      "esri/views/draw/Draw",
+      "esri/Graphic",
+      "esri/geometry/geometryEngine"
+    ], function (Map, MapView, Draw, Graphic, geometryEngine) {
+      const map = new Map({
+        basemap: "gray"
+      });
+
+      const view = new MapView({
+        container: "viewDiv",
+        map: map,
+        zoom: 16,
+        center: [18.06, 59.34]
+      });
+
+      // add the button for the draw tool
+      view.ui.add("line-button", "top-left");
+
+      const draw = new Draw({
+        view: view
+      });
+      let deleteEvent = view.on('click', (evt) => {
+        console.log(evt)
+      })
+      let mouseMove = view.on('drag', (evt) => {
+        console.log(evt)
+      })
+    });
+
+  </script>
+</head>
+
+<body>
+  <div id="viewDiv">
+    <div id="line-button" class="esri-widget esri-widget--button
+        esri-interactive" title="Draw polyline">
+      <span class="esri-icon-polyline"></span>
+    </div>
+  </div>
+</body>
+
+</html>
