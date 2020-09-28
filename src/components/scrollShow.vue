@@ -134,7 +134,7 @@ export default {
 
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .scroll-show-contain {
   height: 36px;
   overflow: hidden;

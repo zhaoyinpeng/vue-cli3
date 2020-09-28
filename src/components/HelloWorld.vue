@@ -1,23 +1,36 @@
 <template>
   <div class="ad-list">
-    <p>单列有下划线</p>
-    <scroll-show class="ad" :dataList="adList" hover-color="#b4a078" inhover-color="#000" :hasLine="true"></scroll-show>
-    <p>多列无下划线</p>
-    <scroll-show class="ad" :dataList="adList2" :speed="3000" hover-color="#b4a078" inhover-color="#969696"
-      value-list="subList" value-content="adContent" value-link="adLink"></scroll-show>
-    <Proxy />
-    <Pie3D />
+    <el-tabs type="border-card">
+      <el-tab-pane>
+        <span slot="label"><i class="el-icon-date"></i> elementUI</span>
+        <ElementUI />
+      </el-tab-pane>
+      <el-tab-pane label="ad">
+        <p>单列有下划线</p>
+        <scroll-show class="ad" :dataList="adList" hover-color="#b4a078" inhover-color="#000" :hasLine="true"></scroll-show>
+        <p>多列无下划线</p>
+        <scroll-show class="ad" :dataList="adList2" :speed="3000" hover-color="#b4a078" inhover-color="#969696" value-list="subList" value-content="adContent" value-link="adLink"></scroll-show>
+      </el-tab-pane>
+      <el-tab-pane label="Proxy">
+        <Proxy />
+      </el-tab-pane>
+      <el-tab-pane label="Pie3D">
+        <Pie3D />
+      </el-tab-pane>
+    </el-tabs>
   </div>
 </template>
 <script>
 import ScrollShow from './scrollShow.vue'
 import Proxy from './proxy'
 import Pie3D from './3DPie'
+import ElementUI from './elementUI'
 export default {
   components: {
     'scroll-show': ScrollShow,
     Proxy,
-    Pie3D
+    Pie3D,
+    ElementUI
   },
   data() {
     return {
@@ -71,7 +84,7 @@ export default {
   }
 }
 </script>
-<style lang="less">
+<style lang="scss">
 .ad-list {
   margin-top: 5px;
   font-size: 14px;
