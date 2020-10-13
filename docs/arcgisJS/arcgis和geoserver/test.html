@@ -1,0 +1,330 @@
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="imagetoolbar" content="no" />
+    <title>GGJC_ZSTDT_MAP EPSG:4547_GGJC_ZSTDT_MAP image/jpeg</title>
+    <style type="text/css">
+      body {
+        font-family: sans-serif;
+        font-weight: bold;
+        font-size: 0.8em;
+      }
+      body {
+        border: 0px;
+        margin: 0px;
+        padding: 0px;
+      }
+      #map {
+        width: 85%;
+        height: 85%;
+        border: 0px;
+        padding: 0px;
+      }
+      #info iframe {
+        border: none;
+      }
+      .ol-scale-value {
+        top: 24px;
+        right: 8px;
+        position: absolute;
+      }
+      .ol-zoom-value {
+        top: 40px;
+        right: 8px;
+        position: absolute;
+      }
+    </style>
+    <script src="../rest/web/openlayers3/ol.js"></script>
+    <link
+      rel="stylesheet"
+      href="../rest/web/openlayers3/ol.css"
+      type="text/css"
+    />
+    <script type="text/javascript">
+      function init() {
+        function ScaleControl(opt_options) {
+          var options = opt_options || {};
+
+          var element = document.createElement("div");
+          element.setAttribute("id", "scale");
+          element.className = "ol-scale-value";
+
+          ol.control.Control.call(this, {
+            element: element,
+            target: options.target
+          });
+        }
+        ol.inherits(ScaleControl, ol.control.Control);
+        ScaleControl.prototype.setMap = function(map) {
+          map.on(
+            "postrender",
+            function() {
+              var view = map.getView();
+              var resolution = view.getResolution();
+              var dpi = 96.0;
+              var mpu = map
+                .getView()
+                .getProjection()
+                .getMetersPerUnit();
+              var scale = resolution * mpu * 39.37 * dpi;
+
+              if (scale >= 9500 && scale <= 950000) {
+                scale = Math.round(scale / 1000) + "K";
+              } else if (scale >= 950000) {
+                scale = Math.round(scale / 1000000) + "M";
+              } else {
+                scale = Math.round(scale);
+              }
+              document.getElementById("scale").innerHTML =
+                "Scale = 1 : " + scale;
+            },
+            this
+          );
+          ol.control.Control.prototype.setMap.call(this, map);
+        };
+
+        function ZoomControl(opt_options) {
+          var options = opt_options || {};
+
+          var element = document.createElement("div");
+          element.setAttribute("id", "zoom");
+          element.className = "ol-zoom-value";
+
+          ol.control.Control.call(this, {
+            element: element,
+            target: options.target
+          });
+        }
+        ol.inherits(ZoomControl, ol.control.Control);
+        ZoomControl.prototype.setMap = function(map) {
+          map.on(
+            "moveend",
+            function() {
+              var view = map.getView();
+              document.getElementById("zoom").innerHTML =
+                "Zoom level = " + view.getZoom();
+            },
+            this
+          );
+          ol.control.Control.prototype.setMap.call(this, map);
+        };
+
+        var gridsetName = "EPSG:4547_GGJC_ZSTDT_MAP";
+        var gridNames = [
+          "EPSG:4547_GGJC_ZSTDT_MAP:0",
+          "EPSG:4547_GGJC_ZSTDT_MAP:1",
+          "EPSG:4547_GGJC_ZSTDT_MAP:2",
+          "EPSG:4547_GGJC_ZSTDT_MAP:3",
+          "EPSG:4547_GGJC_ZSTDT_MAP:4",
+          "EPSG:4547_GGJC_ZSTDT_MAP:5",
+          "EPSG:4547_GGJC_ZSTDT_MAP:6",
+          "EPSG:4547_GGJC_ZSTDT_MAP:7",
+          "EPSG:4547_GGJC_ZSTDT_MAP:8",
+          "EPSG:4547_GGJC_ZSTDT_MAP:9",
+          "EPSG:4547_GGJC_ZSTDT_MAP:10"
+        ];
+        var baseUrl = "../service/wmts";
+        var style = "";
+        var format = "image/jpeg";
+        var infoFormat = "text/html";
+        var layerName = "GGJC_ZSTDT_MAP";
+        var projection = new ol.proj.Projection({
+          code: "EPSG:4547",
+          units: "",
+          axisOrientation: "neu"
+        });
+        var resolutions = [
+          152.8744390822115,
+          76.43721954110575,
+          38.218609770552874,
+          19.109304885276437,
+          9.554652442638218,
+          4.777326221319109,
+          2.3886631106595546,
+          1.1943315553297773,
+          0.5971657776648887,
+          0.29871518076369485,
+          0.1492252984505969
+        ];
+        baseParams = [
+          "VERSION",
+          "LAYER",
+          "STYLE",
+          "TILEMATRIX",
+          "TILEMATRIXSET",
+          "SERVICE",
+          "FORMAT"
+        ];
+
+        params = {
+          VERSION: "1.0.0",
+          LAYER: layerName,
+          STYLE: style,
+          TILEMATRIX: gridNames,
+          TILEMATRIXSET: gridsetName,
+          SERVICE: "WMTS",
+          FORMAT: format
+        };
+
+        function constructSource() {
+          var url = baseUrl + "?";
+          for (var param in params) {
+            if (baseParams.indexOf(param.toUpperCase()) < 0) {
+              url = url + param + "=" + params[param] + "&";
+            }
+          }
+          url = url.slice(0, -1);
+
+          var source = new ol.source.WMTS({
+            url: url,
+            layer: params["LAYER"],
+            matrixSet: params["TILEMATRIXSET"],
+            format: params["FORMAT"],
+            projection: projection,
+            tileGrid: new ol.tilegrid.WMTS({
+              tileSize: [256, 256],
+              extent: [
+                -5123200.0,
+                2448879.7138260948,
+                473227.4659215985,
+                1.00021e7
+              ],
+              origin: [-5123200.0, 1.00021e7],
+              resolutions: resolutions,
+              matrixIds: params["TILEMATRIX"]
+            }),
+            style: params["STYLE"],
+            wrapX: true
+          });
+          return source;
+        }
+
+        var layer = new ol.layer.Tile({
+          source: constructSource()
+        });
+
+        var view = new ol.View({
+          center: [0, 0],
+          zoom: 2,
+          resolutions: resolutions,
+          projection: projection,
+          extent: [
+            -5123200.0,
+            2448879.7138260948,
+            473227.4659215985,
+            10002100.0
+          ]
+        });
+
+        var map = new ol.Map({
+          controls: ol.control
+            .defaults({ attribution: false })
+            .extend([
+              new ol.control.MousePosition(),
+              new ScaleControl(),
+              new ZoomControl()
+            ]),
+          layers: [layer],
+          target: "map",
+          view: view
+        });
+        map
+          .getView()
+          .fit(
+            [412692.5427, 2456655.1439, 461859.5175, 2519895.1865],
+            map.getSize()
+          );
+
+        window.setParam = function(name, value) {
+          if (name == "STYLES") {
+            name = "STYLE";
+          }
+          params[name] = value;
+          layer.setSource(constructSource());
+          map.updateSize();
+        };
+
+        map.on("singleclick", function(evt) {
+          document.getElementById("info").innerHTML = "";
+
+          var source = layer.getSource();
+          var resolution = view.getResolution();
+          var tilegrid = source.getTileGrid();
+          var tileResolutions = tilegrid.getResolutions();
+          var zoomIdx,
+            diff = Infinity;
+
+          for (var i = 0; i < tileResolutions.length; i++) {
+            var tileResolution = tileResolutions[i];
+            var diffP = Math.abs(resolution - tileResolution);
+            if (diffP < diff) {
+              diff = diffP;
+              zoomIdx = i;
+            }
+            if (tileResolution < resolution) {
+              break;
+            }
+          }
+          var tileSize = tilegrid.getTileSize(zoomIdx);
+          var tileOrigin = tilegrid.getOrigin(zoomIdx);
+
+          var fx =
+            (evt.coordinate[0] - tileOrigin[0]) / (resolution * tileSize[0]);
+          var fy =
+            (tileOrigin[1] - evt.coordinate[1]) / (resolution * tileSize[1]);
+          var tileCol = Math.floor(fx);
+          var tileRow = Math.floor(fy);
+          var tileI = Math.floor((fx - tileCol) * tileSize[0]);
+          var tileJ = Math.floor((fy - tileRow) * tileSize[1]);
+          var matrixIds = tilegrid.getMatrixIds()[zoomIdx];
+          var matrixSet = source.getMatrixSet();
+
+          var url = baseUrl + "?";
+          for (var param in params) {
+            if (param.toUpperCase() == "TILEMATRIX") {
+              url = url + "TILEMATRIX=" + matrixIds + "&";
+            } else {
+              url = url + param + "=" + params[param] + "&";
+            }
+          }
+
+          url =
+            url +
+            "SERVICE=WMTS&REQUEST=GetFeatureInfo" +
+            "&INFOFORMAT=" +
+            infoFormat +
+            "&TileCol=" +
+            tileCol +
+            "&TileRow=" +
+            tileRow +
+            "&I=" +
+            tileI +
+            "&J=" +
+            tileJ;
+
+          if (url) {
+            document.getElementById("info").innerHTML =
+              "Loading... please wait...";
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.onreadystatechange = function() {
+              if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+                if (xmlhttp.status == 200) {
+                  document.getElementById("info").innerHTML =
+                    xmlhttp.responseText;
+                } else {
+                  document.getElementById("info").innerHTML = "";
+                }
+              }
+            };
+            xmlhttp.open("GET", url, true);
+            xmlhttp.send();
+          }
+        });
+      }
+    </script>
+  </head>
+  <body onload="init()">
+    <div id="params"></div>
+    <div id="map"></div>
+    <div id="info"></div>
+  </body>
+</html>

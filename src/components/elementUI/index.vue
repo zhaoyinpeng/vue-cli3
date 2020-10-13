@@ -49,12 +49,16 @@
       <el-button type="warning" icon="iconfont el-icon-zyp-ai28" circle></el-button>
       <el-button type="danger" icon="iconfont el-icon-zyp-ai28" circle></el-button>
     </el-row>
+    <autoWithPage />
   </div>
 </template>
 <script>
+import autoWithPage from './autoWithPage.vue'
 export default {
   name: '',
-  components: {},
+  components: {
+    autoWithPage
+  },
   directives: {},
   filters: {},
   mixins: [],

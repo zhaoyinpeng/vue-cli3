@@ -1,0 +1,347 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <!--
+  ArcGIS API for JavaScript, https://js.arcgis.com
+  For more information about the draw-line sample, read the original sample description at developers.arcgis.com.
+  https://developers.arcgis.com/javascript/latest/sample-code/draw-line/index.html
+  -->
+    <title></title>
+    <script src="./config.js"></script>
+    <link rel="stylesheet" href="https://js.arcgis.com/4.17/esri/themes/light/main.css">
+    <script src="https://js.arcgis.com/4.17/"></script>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .btnBox {
+        width: 100%;
+        position: absolute;
+        top: 20px;
+        left: 0;
+        text-align: center;
+      }
+    </style>
+    <script>
+      require([
+        "esri/Map",
+        "esri/geometry/Extent",
+        "esri/views/MapView",
+        "esri/layers/TileLayer",
+        "esri/layers/WebTileLayer",
+        "esri/layers/WMSLayer",
+        "esri/layers/WMTSLayer",
+        "esri/layers/OGCFeatureLayer",
+        "esri/layers/support/WMTSSublayer",
+        "esri/layers/support/TileMatrixSet",
+        "esri/layers/support/TileInfo",
+        "esri/geometry/SpatialReference"
+      ], function(
+        Map,
+        Extent,
+        MapView,
+        TileLayer,
+        WebTileLayer,
+        WMSLayer,
+        WMTSLayer,
+        OGCFeatureLayer,
+        WMTSSublayer,
+        TileMatrixSet,
+        TileInfo,
+        SpatialReference
+      ) {
+        var lods = [
+          { level: 0, resolution: 152.8744390822115, scale: 577792 },
+          { level: 1, resolution: 76.43721954110575, scale: 288896 },
+          { level: 2, resolution: 38.218609770552874, scale: 144448 },
+          { level: 3, resolution: 19.109304885276437, scale: 72224 },
+          { level: 4, resolution: 9.554652442638218, scale: 36112 },
+          { level: 5, resolution: 4.777326221319109, scale: 18056 },
+          { level: 6, resolution: 2.3886631106595546, scale: 9028 },
+          { level: 7, resolution: 1.1943315553297773, scale: 4514 },
+          { level: 8, resolution: 0.5971657776648887, scale: 2257 },
+          { level: 9, resolution: 0.29871518076369485, scale: 1129 },
+          { level: 10, resolution: 0.1492252984505969, scale: 564 }
+        ];
+        let baseLayer = new TileLayer({
+          url:
+            "http://dev.chinadci.com:38080/arcgis/rest/services/ZW/ZSTDT_MAP/MapServer"
+        });
+        window.map = new Map({
+          layers: [baseLayer]
+        });
+        window.view = new MapView({
+          container: "viewDiv",
+          map,
+          zoom: MapServerConfig.fullMap.zoom,
+          extent: MapServerConfig.extent,
+          center: [MapServerConfig.fullMap.x, MapServerConfig.fullMap.y],
+          spatialReference: {
+            wkid: 4547
+          },
+          constraints: {
+            minZoom: 0,
+            maxZoom: 10,
+            lods
+          }
+        });
+        // 地图范围
+        let extent = Object.assign({}, MapServerConfig.extent, {
+          spatialReference: {
+            wkid: 4547
+          }
+        });
+        view.extent = new Extent(extent);
+        view.when(() => {
+          // addGeoserverWMSLayer();
+          // addGeoserverWMTSLayer();
+          addGeoserverWFSLayer();
+          view.on("pointer-move", evt => {
+            let poi = view.toMap({ x: evt.x, y: evt.y });
+            document.getElementById("x").innerHTML = poi.x.toFixed(3);
+            document.getElementById("y").innerHTML = poi.y.toFixed(3);
+          });
+          view.on("mouse-wheel", function(evt) {
+            console.info(view.zoom);
+            //鼠标滚轮缩小
+            if (evt.deltaY > 0 && view.zoom <= 0) {
+              evt.stopPropagation();
+              return false;
+            }
+            //鼠标滚轮放大
+            else if (evt.deltaY < 0 && view.zoom >= 10) {
+              evt.stopPropagation();
+              return false;
+            }
+            if (
+              (evt.deltaY > 0 && view.zoom <= 0) ||
+              (evt.deltaY < 0 && view.zoom >= 10)
+            ) {
+              console.info(view.scale);
+              console.info(evt);
+            }
+          });
+          view.on("click", evt => {
+            queryMsg(evt);
+          });
+        });
+        let wmsLayer, wmtsLayer, wfsLayer;
+        //添加wms服务
+        function addGeoserverWMSLayer() {
+          map.remove(wmsLayer);
+          wmsLayer = new WMSLayer({
+            url:
+              "http://dev.chinadci.com:38080/geoserver/zhongshan_pg/wms?CQL_FILTER=id%3D24",
+            sublayers: [
+              {
+                name: "XZQH_ZQJ"
+              }
+            ],
+            spatialReference: new SpatialReference({
+              wkid: 4547
+            })
+          });
+          map.add(wmsLayer);
+        }
+        //添加wmts服务
+        function addGeoserverWMTSLayer() {
+          map.remove(wmtsLayer);
+          // wmts
+          // wmtsLayer = new WMTSLayer({
+          //   url: "http://dev.chinadci.com:38080/geoserver/gwc/service/wmts", // url to the service
+          //   activeLayer: {
+          //     id: "zhongshan_pg:XZQH_ZQJ"
+          //   }
+          // });
+          // wmts 加载失败
+          // wmtsLayer = new WMTSLayer({
+          //   id: 'wmtsLayer',
+          //   url: 'http://dev.chinadci.com:38080/geoserver/gwc/service/wmts',
+          //   activeLayer: new WMTSSublayer({
+          //     fullExtent: extent,
+          //     id: 'zhongshan_pg:XZQH_ZQJ'
+          //   }),
+          //   tileMatrixSets: [
+          //     new TileMatrixSet({
+          //       fullExtent: extent,
+          //       // tileInfo: new TileInfo({
+          //       tileInfo: {
+          //         cols: 256,
+          //         rows: 256,
+          //         dpi: 96,
+          //         format: 'image/png',
+          //         lods: [
+          //           { level: 0, resolution: 161.78176, scale: 577792 },
+          //           { level: 1, resolution: 80.89088, scale: 288896 },
+          //           { level: 2, resolution: 40.44544, scale: 144448 },
+          //           { level: 3, resolution: 20.22272, scale: 72224 },
+          //           { level: 4, resolution: 10.11136, scale: 36112 },
+          //           { level: 5, resolution: 5.05568, scale: 18056 },
+          //           { level: 6, resolution: 2.52784, scale: 9028 },
+          //           { level: 7, resolution: 1.26392, scale: 4514 },
+          //           { level: 8, resolution: 0.63196, scale: 2257 },
+          //           { level: 9, resolution: 0.31612, scale: 1129 },
+          //           { level: 10, resolution: 0.15792, scale: 564 }
+          //         ],
+          //         origin: {
+          //           x: 412692.5427000001,
+          //           y: 2519895.1865
+          //         },
+          //         spatialReference: {
+          //           wkid: 4547
+          //         }
+          //       }
+          //     })
+          //   ]
+          //   // tileMatrixSet: new TileMatrixSet()
+          // })
+          //wmts 有偏移
+          // wmtsLayer = new WebTileLayer({
+          //   urlTemplate:
+          //     "http://dev.chinadci.com:38080/geoserver/gwc/service/wmts?SERVICE=WMTS&request=GetTile&version=1.0.0&LAYER=zhongshan_pg:XZQH_ZQJ&TileMatrixSet=ZS_4547&TileMatrix=ZS_4547:{level}&TileRow={row}&TileCol={col}&style=&format=image/png",
+          //   id: "testWeb",
+          //   spatialReference: {
+          //     wkid: 4547
+          //   },
+          //   tileInfo: {
+          //     cols: 256,
+          //     rows: 256,
+          //     dpi: 96,
+          //     format: "image/png",
+          //     lods: [
+          //       { level: 0, resolution: 161.78176, scale: 577792 },
+          //       { level: 1, resolution: 80.89088, scale: 288896 },
+          //       { level: 2, resolution: 40.44544, scale: 144448 },
+          //       { level: 3, resolution: 20.22272, scale: 72224 },
+          //       { level: 4, resolution: 10.11136, scale: 36112 },
+          //       { level: 5, resolution: 5.05568, scale: 18056 },
+          //       { level: 6, resolution: 2.52784, scale: 9028 },
+          //       { level: 7, resolution: 1.26392, scale: 4514 },
+          //       { level: 8, resolution: 0.63196, scale: 2257 },
+          //       { level: 9, resolution: 0.31612, scale: 1129 },
+          //       { level: 10, resolution: 0.15792, scale: 564 }
+          //     ],
+          //     origin: {
+          //       x: 412692.5427000001,
+          //       y: 2519895.1865
+          //     },
+          //     spatialReference: {
+          //       wkid: 4547
+          //     }
+          //   },
+          //   fullExtent: extent
+          // });
+
+          // http://dev.chinadci.com:38080/geowebcache/demo/GGJC_ZSTDT_MAP?gridSet=EPSG:4547_GGJC_ZSTDT_MAP&format=image/jpeg
+          // http://dev.chinadci.com:38080/geowebcache/service/wmts?layer=GGJC_ZSTDT_MAP&style=&tilematrixset=EPSG:4547_GGJC_ZSTDT_MAP&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix=EPSG:4547_GGJC_ZSTDT_MAP:4&TileCol=2274&TileRow=3074
+          wmtsLayer = new WebTileLayer({
+            // urlTemplate:
+            //   "http://dev.chinadci.com:38080/geowebcache/service/wmts?layer=GGJC_ZSTDT_MAP&style=&tilematrixset=EPSG:4547_GGJC_ZSTDT_MAP&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix=EPSG:4547_GGJC_ZSTDT_MAP:{level}&TileCol={col}&TileRow={row}",
+            urlTemplate:
+              "http://172.26.156.142:8080/geowebcache/service/wmts?layer=GGJC_ZSTDT_MAP&style=&tilematrixset=EPSG:4547_GGJC_ZSTDT_MAP&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image%2Fjpeg&TileMatrix=EPSG:4547_GGJC_ZSTDT_MAP:{level}&TileCol={col}&TileRow={row}",
+            id: "testWeb",
+            spatialReference: {
+              wkid: 4547
+            },
+            tileInfo: {
+              cols: 256,
+              rows: 256,
+              dpi: 96,
+              format: "image/png",
+              lods: [
+                { level: 0, resolution: 152.8744390822115, scale: 577792 },
+                { level: 1, resolution: 76.43721954110575, scale: 288896 },
+                { level: 2, resolution: 38.218609770552874, scale: 144448 },
+                { level: 3, resolution: 19.109304885276437, scale: 72224 },
+                { level: 4, resolution: 9.554652442638218, scale: 36112 },
+                { level: 5, resolution: 4.777326221319109, scale: 18056 },
+                { level: 6, resolution: 2.3886631106595546, scale: 9028 },
+                { level: 7, resolution: 1.1943315553297773, scale: 4514 },
+                { level: 8, resolution: 0.5971657776648887, scale: 2257 },
+                { level: 9, resolution: 0.29871518076369485, scale: 1129 },
+                { level: 10, resolution: 0.1492252984505969, scale: 564 }
+              ],
+              origin: {
+                x: -5123200.0,
+                y: 1.00021e7
+              },
+              spatialReference: {
+                wkid: 4547
+              }
+            },
+            fullExtent: {
+              xmin: -5123200.0,
+              ymin: 2448879.7138260948,
+              xmax: 473227.4659215985,
+              ymax: 10002100.0,
+              spatialReference: {
+                wkid: 4547
+              }
+            }
+          });
+          map.add(wmtsLayer);
+        }
+        // 添加wfs服务
+        function addGeoserverWFSLayer() {
+          map.remove(wfsLayer);
+          wfsLayer = new OGCFeatureLayer({
+            url: "http://dev.chinadci.com:38080/geoserver/zhongshan_pg/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=zhongshan_pg%3AXZQH_ZQJ&outputFormat=application%2Fjson"
+          });
+          map.add(wfsLayer);
+        }
+        // 发送请求查询
+        function queryMsg(evt) {
+          console.log(evt);
+          map.on("singleclick", function(evt) {
+            document.getElementById("nodelist").innerHTML =
+              "Loading... please wait...";
+            var view = map.getView();
+            var viewResolution = view.getResolution();
+            var source = untiled.get("visible")
+              ? untiled.getSource()
+              : tiled.getSource();
+            var url = source.getGetFeatureInfoUrl(
+              evt.coordinate,
+              viewResolution,
+              view.getProjection(),
+              { INFO_FORMAT: "text/html", FEATURE_COUNT: 50 }
+            );
+            if (url) {
+              document.getElementById("nodelist").innerHTML =
+                '<iframe seamless src="' + url + '"></iframe>';
+            }
+          });
+        }
+        document.getElementById("addWMS").onclick = addGeoserverWMSLayer;
+        document.getElementById("addWMTS").onclick = addGeoserverWMTSLayer;
+        document.getElementById("addWFS").onclick = addGeoserverWFSLayer;
+        document.getElementById("delete").onclick = () => {
+          map.removeMany([wmsLayer, wmtsLayer]);
+        };
+      });
+    </script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <div class="btnBox">
+      <button id="addWMS">添加wms</button>
+      <button id="addWMTS">添加wmts</button>
+      <button id="addWFS">添加wfs</button>
+      <button id="delete">移除图层</button>
+      x:
+      <span id="x"></span>
+      y:
+      <span id="y"></span>
+    </div>
+  </body>
+</html>

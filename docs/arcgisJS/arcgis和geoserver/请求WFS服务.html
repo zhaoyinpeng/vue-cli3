@@ -1,0 +1,189 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <title></title>
+    <script src="./config.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.17/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.17/"></script>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        height: 100%;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      .btnBox {
+        width: 100%;
+        position: absolute;
+        top: 20px;
+        left: 0;
+        text-align: center;
+      }
+    </style>
+    <script>
+      require([
+        "esri/Map",
+        "esri/geometry/Extent",
+        "esri/views/MapView",
+        "esri/layers/TileLayer",
+        "esri/layers/WebTileLayer",
+        "esri/layers/WMSLayer",
+        "esri/layers/WMTSLayer",
+        "esri/layers/OGCFeatureLayer",
+        "esri/layers/support/WMTSSublayer",
+        "esri/layers/support/TileMatrixSet",
+        "esri/layers/support/TileInfo",
+        "esri/geometry/SpatialReference"
+      ], function(
+        Map,
+        Extent,
+        MapView,
+        TileLayer,
+        WebTileLayer,
+        WMSLayer,
+        WMTSLayer,
+        OGCFeatureLayer,
+        WMTSSublayer,
+        TileMatrixSet,
+        TileInfo,
+        SpatialReference
+      ) {
+        var lods = [
+          { level: 0, resolution: 152.8744390822115, scale: 577792 },
+          { level: 1, resolution: 76.43721954110575, scale: 288896 },
+          { level: 2, resolution: 38.218609770552874, scale: 144448 },
+          { level: 3, resolution: 19.109304885276437, scale: 72224 },
+          { level: 4, resolution: 9.554652442638218, scale: 36112 },
+          { level: 5, resolution: 4.777326221319109, scale: 18056 },
+          { level: 6, resolution: 2.3886631106595546, scale: 9028 },
+          { level: 7, resolution: 1.1943315553297773, scale: 4514 },
+          { level: 8, resolution: 0.5971657776648887, scale: 2257 },
+          { level: 9, resolution: 0.29871518076369485, scale: 1129 },
+          { level: 10, resolution: 0.1492252984505969, scale: 564 }
+        ];
+        let baseLayer = new TileLayer({
+          url:
+            "http://dev.chinadci.com:38080/arcgis/rest/services/ZW/ZSTDT_MAP/MapServer"
+        });
+        window.map = new Map({
+          layers: [baseLayer]
+        });
+        window.view = new MapView({
+          container: "viewDiv",
+          map,
+          zoom: MapServerConfig.fullMap.zoom,
+          extent: MapServerConfig.extent,
+          center: [MapServerConfig.fullMap.x, MapServerConfig.fullMap.y],
+          spatialReference: {
+            wkid: 4547
+          },
+          constraints: {
+            minZoom: 0,
+            maxZoom: 10,
+            lods
+          }
+        });
+        // 地图范围
+        let extent = Object.assign({}, MapServerConfig.extent, {
+          spatialReference: {
+            wkid: 4547
+          }
+        });
+        view.extent = new Extent(extent);
+        view.when(() => {
+          // addGeoserverWFSLayer();
+          view.on("pointer-move", evt => {
+            let poi = view.toMap({ x: evt.x, y: evt.y });
+            document.getElementById("x").innerHTML = poi.x.toFixed(3);
+            document.getElementById("y").innerHTML = poi.y.toFixed(3);
+          });
+          view.on("mouse-wheel", function(evt) {
+            console.info(view.zoom);
+            //鼠标滚轮缩小
+            if (evt.deltaY > 0 && view.zoom <= 0) {
+              evt.stopPropagation();
+              return false;
+            }
+            //鼠标滚轮放大
+            else if (evt.deltaY < 0 && view.zoom >= 10) {
+              evt.stopPropagation();
+              return false;
+            }
+            if (
+              (evt.deltaY > 0 && view.zoom <= 0) ||
+              (evt.deltaY < 0 && view.zoom >= 10)
+            ) {
+              console.info(view.scale);
+              console.info(evt);
+            }
+          });
+        });
+        // 获取图层GeoJson数据
+        function getLayerGeoJsonData() {
+          let url =
+            "http://dev.chinadci.com:8115/geoserver/CityAdministrativeDivision/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=CityAdministrativeDivision%3AAdministrativeDivisionCity&outputFormat=application%2Fjson";
+          fetch(url, {
+            credentials: "include"
+          })
+            .then(function(response) {
+              return response.json();
+            })
+            .then(function(myJson) {
+              console.log(myJson);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+        // 根据条件筛选图层GeoJson数据
+        function getLayerGeoJsonDataByParames() {
+          let url =
+            "http://dev.chinadci.com:8115/geoserver/CityAdministrativeDivision/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=CityAdministrativeDivision%3AAdministrativeDivisionCity&outputFormat=application%2Fjson";
+          let cql = "&CQL_FILTER=DIST_CODE=450200";
+          url += cql;
+          fetch(url, {
+            credentials: "include"
+          })
+            .then(function(response) {
+              return response.json();
+            })
+            .then(function(myJson) {
+              console.log(myJson);
+            })
+            .catch(err => {
+              console.log(err);
+            });
+        }
+        document.getElementById(
+          "getLayerGeoJsonData"
+        ).onclick = getLayerGeoJsonData;
+        document.getElementById(
+          "getLayerGeoJsonDataByParames"
+        ).onclick = getLayerGeoJsonDataByParames;
+      });
+    </script>
+  </head>
+  <body>
+    <div id="viewDiv"></div>
+    <div class="btnBox">
+      <button id="getLayerGeoJsonData">获取图层GeoJson数据</button>
+      <button id="getLayerGeoJsonDataByParames">
+        根据条件筛选图层GeoJson数据
+      </button>
+      x:
+      <span id="x"></span>
+      y:
+      <span id="y"></span>
+    </div>
+  </body>
+</html>
