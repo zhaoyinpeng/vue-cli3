@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <span id="test">
+      正常页面
+    </span>
+    <script>
+      if (top.location != window.location) {
+        //如果不相等，说明使用了iframe，可进行相关的操作
+        alert("不能内嵌此页面");
+        document.getElementById("test").innerHTML = "测试页面，禁止内嵌!!!!";
+      }
+    </script>
+  </body>
+</html>

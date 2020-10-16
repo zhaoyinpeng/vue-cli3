@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      div.a {
+        width: 50px;
+        height: 50px;
+        background: lightblue;
+        margin: 50px;
+      }
+      .container {
+        background-color: #ccc;
+        /* 第一种 */
+        /* overflow: hidden; */
+        /* 第二种 */
+        /* display: inline-block;
+        width: 100%; */
+        /* 第三种 */
+        float: left;
+        width: 100%;
+        /* 第四种 这种就不演示了*/
+        /* position: absolute; */
+      }
+      .container p {
+        width: 50px;
+        height: 50px;
+        background-color: teal;
+        margin: 50px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>1.同一个 BFC 下外边距会发生折叠,body是bfc容器</h1>
+    <div class="a"></div>
+    <div class="a"></div>
+    <p>如果想要避免外边距的重叠，可以将其放在不同的 BFC 容器中。</p>
+    <div class="container">
+      <p></p>
+    </div>
+    <div class="container">
+      <p></p>
+    </div>
+    <h1>2. BFC 可以包含浮动的元素（清除浮动）</h1>
+    <div style="border: 1px solid #000;">
+      <div
+        style="width: 100px;height: 100px;background: #eee;float: left;"
+      ></div>
+    </div>
+    <p>
+      由于容器内元素浮动，脱离了文档流，所以容器只剩下 2px
+      的边距高度。如果使触发容器的 BFC，那么容器将会包裹着浮动元素。
+    </p>
+    <div style="border: 1px solid #000;overflow: hidden">
+      <div
+        style="width: 100px;height: 100px;background: #eee;float: left;"
+      ></div>
+    </div>
+    <h2>3. BFC 可以阻止元素被浮动元素覆盖</h2>
+    <div style="height: 100px;width: 100px;float: left;background: lightblue">
+      我是一个左浮动的元素
+    </div>
+    <div style="width: 200px; height: 200px;background: #eee">
+      我是一个没有设置浮动, 也没有触发 BFC 元素, width: 200px; height:200px;
+      background: #eee;
+    </div>
+    <p>这时候其实第二个元素有部分被浮动元素所覆盖，(但是文本信息不会被浮动元素所覆盖) 如果想避免元素被覆盖，可触第二个元素的 BFC 特性，在第二个元素中加入 overflow: hidden，就会变成：</p>
+    <div style="height: 100px;width: 100px;float: left;background: lightblue">
+      我是一个左浮动的元素
+    </div>
+    <div style="width: 200px; height: 200px;background: #eee;overflow:hidden;">
+      我是一个没有设置浮动, 也没有触发 BFC 元素, width: 200px; height:200px;
+      background: #eee;
+    </div>
+
+    <p>这个方法可以用来实现两列自适应布局，效果不错，这时候左边的宽度固定，右边的内容自适应宽度(去掉上面右边内容的宽度)。</p>
+    <div style="height: 100px;width: 100px;float: left;background: lightblue">
+      我是一个左浮动的元素
+    </div>
+    <div style="height: 200px;background: #eee;overflow:hidden;">
+      我是一个没有设置浮动, 也没有触发 BFC 元素, height:200px;
+      background: #eee;
+    </div>
+  </body>
+</html>
