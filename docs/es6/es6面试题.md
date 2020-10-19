@@ -26,7 +26,7 @@
 3. const必须定义，定以后不能改变
 4. * 在快级中let不与window映射
 
-#使用箭头函数应注意什么？
+# 使用箭头函数应注意什么？
 1. * 不可以使用yield命令，因此箭头函数不能用作 Generator 函数
 2. 绑定的this为固定为父级
 3. 箭头函数无法作为构造函数，因为没有constructor，不能够使用new命令
@@ -175,7 +175,7 @@ async较Generator的优势：
 （3）更广的适用性。yield命令后面只能是 Thunk 函数或 Promise对象，async函数的await后面可以是Promise也可以是原始类型的值
 （4）返回值是 Promise。async 函数返回的是 Promise 对象，比Generator函数返回的Iterator对象方便，可以直接使用 then() 方法进行调用
 
-#forEach、for in、for of三者区别
+# forEach、for in、for of三者区别
 forEach更多的用来遍历数组
 for in 一般常用来遍历对象或json
 for of数组对象都可以遍历，遍历对象需要通过和Object.keys()

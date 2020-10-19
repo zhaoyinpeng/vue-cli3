@@ -7,7 +7,7 @@
 1. 容器
 
 - flex-direction 属性决定主轴的方向（即项目的排列方向）。
-- flex-wrap 默认情况下，项目都排在一条线（又称"轴线"）上。flex-wrap 属性定义，如果一条轴线排不下，如何换行。
+- *flex-wrap 默认情况下，项目都排在一条线（又称"轴线"）上。flex-wrap 属性定义，如果一条轴线排不下，如何换行。
 - flex-flow flex-flow 属性是 flex-direction 属性和 flex-wrap 属性的简写形式，默认值为 row nowrap。
 - justify-content justify-content 属性定义了项目在主轴上的对齐方式。
 - align-items align-items 属性定义项目在交叉轴上如何对齐。
@@ -16,9 +16,9 @@
 2. 项目
 
 - order order 属性定义项目的排列顺序。数值越小，排列越靠前，默认为 0。
-- flex-grow flex-grow 属性定义项目的放大比例，默认为 0，即如果存在剩余空间，也不放大。
-- flex-shrink flex-shrink 属性定义了项目的缩小比例，默认为 1，即如果空间不足，该项目将缩小。
-- flex-basis flex-basis 属性定义了在分配多余空间之前，项目占据的主轴空间（main size）。浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为 auto，即项目的本来大小。
+- *flex-grow flex-grow 属性定义项目的放大比例，默认为 0，即如果存在剩余空间，也不放大。
+- *flex-shrink flex-shrink 属性定义了项目的缩小比例，默认为 1，即如果空间不足，该项目将缩小。
+- *flex-basis flex-basis 属性定义了在分配多余空间之前，项目占据的主轴空间（main size）。浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为 auto，即项目的本来大小。
 - flex flex 属性是 flex-grow, flex-shrink 和 flex-basis 的简写，默认值为 0 1 auto。后两个属性可选。
 - align-self align-self 属性允许单个项目有与其他项目不一样的对齐方式，可覆盖 align-items 属性。默认值为 auto，表示继承父元素的 align-items 属性，如果没有父元素，则等同于 stretch。
 
@@ -46,10 +46,10 @@ ch：设置 width:40ch 表示这个宽度可以容纳 40 个特定字体的字�
 2）ID 选择器 #id
 3）类选择器 .class
 4）通配符 *
-5）派生选择器 以空格连接多个选择器，表示 ... 的后代，可以隔代
+5）*派生选择器 以空格连接多个选择器，表示 ... 的后代，可以隔代
 6）子元素选择器 以 > 连接多个选择器，表示 ... 的子元素，不能隔代
 7）相邻选择器 以 + 连接多个选择器，表示紧跟在 ... 的兄弟元素
-8）分组选择器 以逗号连接多个选择器，同时选中这些没有关联的选择器
+8）*分组选择器 以逗号连接多个选择器，同时选中这些没有关联的选择器
 9）属性选择器 以 [] 来根据元素的属性名和属性值来选中具有对应信息的元素，可以写多个 [] 来多属性匹配，也可以根据具体的属性值来匹配，还可以通过正则来进行更复杂的匹配
 10）伪类 以单冒号开头，可以找到不能用常规选择器获取到不存在 DOM 树中的信息，可以同时使用多个伪类
 11）伪元素 以双冒号开头，可以像真正的元素那样去展现行为，但并不是真正的元素，只能同时使用一个伪元素
@@ -157,7 +157,7 @@ https://www.cnblogs.com/soyxiaobi/p/9594557.html
 3. 缺点
    屏幕尺度跨度过大的情况下，页面不能正常显示。
 
-### 弹性布局(Flex Layout)
+### *弹性布局(Flex Layout)
 
 1. 布局概念
    弹性布局是 CSS3 引入的强大的布局方式，用来替代以前 Web 开发人员使 的一些复杂易错的 hacks 方法(如 float 实现流式布局)。
@@ -197,7 +197,7 @@ CSS 后处理器是对 CSS 进行处理，并最终生成 CSS 预处理器，属
 animation 和 transiton 的相关属性
 animate 和 translate
 
-1. 先从 css3 的新选择器开始作答：
+1. *先从 css3 的新选择器开始作答：
 
 E:nth-child(n) 选择器匹配其父元素的第 n 个子元素，不论元素类型，n 可以使数字，关键字，或公式
 
@@ -217,7 +217,7 @@ E:target 选择当前活动的 E 元素
 
 E[abc*="def"] 选择 adc 属性值中包含子串"def"的所有元素
 
-2. 文本
+2. *文本
 
 text-shadow:2px 2px 8px #000;参数 1 为向右的偏移量，参数 2 为向左的偏移量，参数 3 为渐变的像素，参数 4 为渐变的颜色
 
@@ -264,7 +264,7 @@ radial-gradient
 
 background-iamge:radial-gradient(120px at center center,yellow,green)
 
-6. 多列布局
+6. *多列布局
 
 column-count
 
