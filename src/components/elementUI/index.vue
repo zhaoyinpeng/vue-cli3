@@ -53,7 +53,7 @@
   </div>
 </template>
 <script>
-import autoWithPage from './autoWithPage.vue'
+import autoWithPage from '@/components/elementUI/autoWithPage.vue'
 export default {
   name: '',
   components: {

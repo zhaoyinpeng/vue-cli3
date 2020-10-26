@@ -11,6 +11,7 @@
     "docs:build": "vuepress build docs"
   },
   "dependencies": {
+    "@turf/turf": "^5.1.6",
     "axios": "^0.19.2",
     "core-js": "^3.4.4",
     "d3": "^5.16.0",

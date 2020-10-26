@@ -1,11 +1,12 @@
 1. vue优点？
-答：轻量级框架：只关注视图层，是一个构建数据的视图集合，大小只有几十kb；
-简单易学：国人开发，中文文档，不存在语言障碍 ，易于理解和学习；
-双向数据绑定：保留了angular的特点，在数据操作方面更为简单；
-组件化：保留了react的优点，实现了html的封装和重用，在构建单页面应用方面有着独特的优势；
-视图，数据，结构分离：使数据的更改更为简单，不需要进行逻辑代码的修改，只需要操作数据就能完成相关操作；
-虚拟DOM：dom操作是非常耗费性能的， 不再使用原生的dom操作节点，极大解放dom操作，但具体操作的还是dom不过是换了另一种方式；
-运行速度更快:相比较与react而言，同样是操作虚拟dom，就性能而言，vue存在很大的优势。
+答：
+1）轻量级框架：只关注视图层，是一个构建数据的视图集合，大小只有几十kb；
+2）简单易学：国人开发，中文文档，不存在语言障碍 ，易于理解和学习；
+3）双向数据绑定：保留了angular的特点，在数据操作方面更为简单；
+4）组件化：保留了react的优点，实现了html的封装和重用，在构建单页面应用方面有着独特的优势；
+5）视图，数据，结构分离：使数据的更改更为简单，不需要进行逻辑代码的修改，只需要操作数据就能完成相关操作；
+6）虚拟DOM：dom操作是非常耗费性能的， 不再使用原生的dom操作节点，极大解放dom操作，但具体操作的还是dom不过是换了另一种方式；
+7）运行速度更快:相比较与react而言，同样是操作虚拟dom，就性能而言，vue存在很大的优势。
 
 2. vue父组件向子组件传递数据？
 答：通过props
@@ -38,10 +39,10 @@
 - v-for循环；
 - v-if v-else v-else-if v-show 显示与隐藏；
 - v-bind用来动态的绑定一个或者多个特性。没有参数时，可以绑定到一个包含键值对的对象。常用于动态绑定class和style。以及href等。
-- v-on事件；
+- *v-on事件；
 > https://blog.csdn.net/sleepwalker_1992/article/details/82903246
 > 修饰符 .stop .prevent .capture .self .once .passive
-- v-once: 只绑定一次。
+- *v-once: 只绑定一次。
 
 9. vue-loader是什么？使用它的用途有哪些？
 答：vue文件的一个加载器，将template/js/style转换成js模块。
@@ -175,6 +176,7 @@ params一般适用于get请求，data一般适用于post put 请求。
 　　2. 准备好组件的数据输入。即分析好逻辑，定好 props 里面的数据、类型。
 　　3. 准备好组件的数据输出。即根据组件逻辑，做好要暴露出来的方法。
 　　4. 封装完毕了，直接调用即可
+
 37. params和query的区别
 答：用法：query要用path来引入，params要用name来引入，接收参数都是类似的，分别是this.$route.query.name和this.$route.params.name。
 url地址显示：query更加类似于我们ajax中get传参，params则类似于post，说的再简单一点，前者在浏览器地址栏中显示参数，后者则不显示
@@ -189,7 +191,7 @@ display: none;
 如果没有彻底解决问题，则在根元素加上style="display: none;" :style="{display: 'block'}"
 
 39. vue更新数组时触发视图更新的方法
-答:push()；pop()；shift()；unshift()；splice()； sort()；reverse()
+答:push()；pop()；shift()；unshift()；splice()； *sort()；*reverse()
 
 40. vue常用的UI组件库
 答：Mint UI，element，VUX
@@ -221,54 +223,67 @@ beforeUpdate： 当执行这个钩子时，页面中的显示的数据还是旧�
 updated：页面显示的数据和data中的数据已经保持同步了，都是最新的
 beforeDestory：Vue实例从运行阶段进入到了销毁阶段，这个时候上所有的 data 和 methods ， 指令， 过滤器 ……都是处于可用状态。还没有真正被销毁
 destroyed： 这个时候上所有的 data 和 methods ， 指令， 过滤器 ……都是处于不可用状态。组件已经被销毁了。
-4.created和mounted的区别
+
+4. created和mounted的区别
 答：created:在模板渲染成html前调用，即通常初始化某些属性值，然后再渲染成视图。
 mounted:在模板渲染成html后调用，通常是初始化页面完成后，再对html的dom节点进行一些需要的操作。
-5.vue获取数据在哪个周期函数
+
+5. vue获取数据在哪个周期函数
 答：一般 created/beforeMount/mounted 皆可.
 比如如果你要操作 DOM , 那肯定 mounted 时候才能操作.
-6.请详细说下你对vue生命周期的理解？
+
+6. 请详细说下你对vue生命周期的理解？
 答：总共分为8个阶段创建前/后，载入前/后，更新前/后，销毁前/后。
 创建前/后： 在beforeCreated阶段，vue实例的挂载元素$el和**数据对象**data都为undefined，还未初始化。在created阶段，vue实例的数据对象data有了，$el还没有。
 载入前/后：在beforeMount阶段，vue实例的$el和data都初始化了，但还是挂载之前为虚拟的dom节点，data.message还未替换。在mounted阶段，vue实例挂载完成，data.message成功渲染。
 更新前/后：当data变化时，会触发beforeUpdate和updated方法。
 销毁前/后：在执行destroy方法后，对data的改变不会再触发周期函数，说明此时vue实例已经解除了事件监听以及和dom的绑定，但是dom结构依然存在。
-vue路由面试题
-1.mvvm 框架是什么？
+
+# vue路由面试题
+1. mvvm 框架是什么？
 答：vue是实现了双向数据绑定的mvvm框架，当视图改变更新模型层，当模型层改变更新视图层。在vue中，使用了双向绑定技术，就是View的变化能实时让Model发生变化，而Model的变化也能实时更新到View。
-2.vue-router 是什么?它有哪些组件
+2. vue-router 是什么?它有哪些组件
 答：vue用来写路由一个插件。router-link、router-view
-3.active-class 是哪个组件的属性？
+
+3. active-class 是哪个组件的属性？
 答：vue-router模块的router-link组件。children数组来定义子路由
-4.怎么定义 vue-router 的动态路由? 怎么获取传过来的值？
+
+4. 怎么定义 vue-router 的动态路由? 怎么获取传过来的值？
 答：在router目录下的index.js文件中，对path属性加上/:id。 使用router对象的params.id。
-5.vue-router 有哪几种导航钩子?
+
+5. vue-router 有哪几种导航钩子?
 答：三种，
 第一种：是全局导航钩子：router.beforeEach(to,from,next)，作用：跳转前进行判断拦截。
 第二种：组件内的钩子
 第三种：单独路由独享组件
-6.$route 和 $router 的区别
+
+6. $route 和 $router 的区别
 答：$router是VueRouter的实例，在script标签中想要导航到不同的URL,使用$router.push方法。返回上一个历史history用$router.to(-1)
 $route为当前router跳转对象。里面可以获取当前路由的name,path,query,parmas等。
-7.vue-router的两种模式
+
+7. vue-router的两种模式
 答:hash模式：即地址栏 URL 中的 # 符号；
 history模式：window.history对象打印出来可以看到里边提供的方法和记录长度。利用了 HTML5 History Interface 中新增的 pushState() 和 replaceState() 方法。（需要特定浏览器支持）。
-8.vue-router实现路由懒加载（ 动态加载路由 ）
+
+8. vue-router实现路由懒加载（ 动态加载路由 ）
 答:三种方式
 第一种：vue异步组件技术 ==== 异步加载，vue-router配置路由 , 使用vue的异步组件技术 , 可以实现按需加载 .但是,这种情况下一个组件生成一个js文件。
 第二种：路由懒加载(使用import)。
 第三种：webpack提供的require.ensure()，vue-router配置路由，使用webpack的require.ensure技术，也可以实现按需加载。这种情况下，多个路由指定相同的chunkName，会合并打包成一个js文件。
+
 vuex常见面试题
-1.vuex是什么？怎么使用？哪种功能场景使用它？
+1. vuex是什么？怎么使用？哪种功能场景使用它？
 答：vue框架中状态管理。在main.js引入store，注入。
 新建了一个目录store.js，….. export 。
 场景有：单页应用中，组件之间的状态。音乐播放、登录状态、加入购物车
-2.vuex有哪几种属性？
+
+2. vuex有哪几种属性？
 答：有五种，分别是 State、 Getter、Mutation 、Action、 Module
 state => 基本数据(数据源存放地)
 getters => 从基本数据派生出来的数据
 mutations => 提交更改数据的方法，同步！
 actions => 像一个装饰器，包裹mutations，使之可以异步。
 modules => 模块化Vuex
-3.Vue.js中ajax请求代码应该写在组件的methods中还是vuex的actions中？
+
+3. Vue.js中ajax请求代码应该写在组件的methods中还是vuex的actions中？
 答：如果请求来的数据是不是要被其他组件公用，仅仅在请求的组件内使用，就不需要放入vuex 的state里。
