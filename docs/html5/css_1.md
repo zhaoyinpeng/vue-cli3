@@ -7,18 +7,18 @@
 1. 容器
 
 - flex-direction 属性决定主轴的方向（即项目的排列方向）。
-- *flex-wrap 默认情况下，项目都排在一条线（又称"轴线"）上。flex-wrap 属性定义，如果一条轴线排不下，如何换行。
-- flex-flow flex-flow 属性是 flex-direction 属性和 flex-wrap 属性的简写形式，默认值为 row nowrap。
+- **flex-wrap 默认情况下，项目都排在一条线（又称"轴线"）上。flex-wrap 属性定义，如果一条轴线排不下，如何换行。
+- *flex-flow flex-flow 属性是 flex-direction 属性和 flex-wrap 属性的简写形式，默认值为 row nowrap。
 - justify-content justify-content 属性定义了项目在主轴上的对齐方式。
-- align-items align-items 属性定义项目在交叉轴上如何对齐。
+- *align-items align-items 属性定义项目在交叉轴上如何对齐。
 - align-content align-content 属性定义了多根轴线的对齐方式。如果项目只有一根轴线，该属性不起作用。
 
 2. 项目
 
 - order order 属性定义项目的排列顺序。数值越小，排列越靠前，默认为 0。
 - *flex-grow flex-grow 属性定义项目的放大比例，默认为 0，即如果存在剩余空间，也不放大。
-- *flex-shrink flex-shrink 属性定义了项目的缩小比例，默认为 1，即如果空间不足，该项目将缩小。
-- *flex-basis flex-basis 属性定义了在分配多余空间之前，项目占据的主轴空间（main size）。浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为 auto，即项目的本来大小。
+- **flex-shrink flex-shrink 属性定义了项目的缩小比例，默认为 1，即如果空间不足，该项目将缩小。
+- **flex-basis flex-basis 属性定义了在分配多余空间之前，项目占据的主轴空间（main size）。浏览器根据这个属性，计算主轴是否有多余空间。它的默认值为 auto，即项目的本来大小。
 - flex flex 属性是 flex-grow, flex-shrink 和 flex-basis 的简写，默认值为 0 1 auto。后两个属性可选。
 - align-self align-self 属性允许单个项目有与其他项目不一样的对齐方式，可覆盖 align-items 属性。默认值为 auto，表示继承父元素的 align-items 属性，如果没有父元素，则等同于 stretch。
 
@@ -33,10 +33,10 @@ em：1em 等于当前字体尺寸（继承父元素的字体尺寸）
 rem：r 为 root，1rem 等于根元素字体尺寸（继承 html 的字体尺寸）
 vh：1vh 等于可视窗口高度的 1/100
 vw: 1vw 等于可视窗口宽度的 1/100
-vmin：可视窗口宽高更小的值的 1/100
-vmax：可视窗口宽高更大的值的 1/100
-ex：当前字体的一个 x-height，一般为当前字体的一个 em 的一半，因为一个 'x' 字母一般为字体大小的一半
-ch：设置 width:40ch 表示这个宽度可以容纳 40 个特定字体的字符
+*vmin：可视窗口宽高更小的值的 1/100
+*vmax：可视窗口宽高更大的值的 1/100
+*ex：当前字体的一个 x-height，一般为当前字体的一个 em 的一半，因为一个 'x' 字母一般为字体大小的一半
+*ch：设置 width:40ch 表示这个宽度可以容纳 40 个特定字体的字符
 ```
 
 ## css 选择器
@@ -157,7 +157,7 @@ https://www.cnblogs.com/soyxiaobi/p/9594557.html
 3. 缺点
    屏幕尺度跨度过大的情况下，页面不能正常显示。
 
-### *弹性布局(Flex Layout)
+### **弹性布局(Flex Layout)
 
 1. 布局概念
    弹性布局是 CSS3 引入的强大的布局方式，用来替代以前 Web 开发人员使 的一些复杂易错的 hacks 方法(如 float 实现流式布局)。

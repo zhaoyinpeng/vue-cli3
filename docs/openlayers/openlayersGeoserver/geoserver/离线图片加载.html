@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css"
+        type="text/css">
+  <style>
+    .map {
+      height: 800px;
+      width: 100%;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+  <title>OpenLayers example</title>
+</head>
+
+<body>
+  <h2>My Map</h2>
+  <div id="map" class="map"></div>
+  <script type="text/javascript">
+    var map = new ol.Map({
+      target: 'map',
+      view: new ol.View({
+        center: [12210643.414124385, 2529585.865216125],
+        zoom: 9
+      })
+    });
+
+    var baseLayer = new ol.layer.Tile({
+      source: new ol.source.TileWMS({
+        // url: 'http://localhost:8090/geoserver/gwc/service/wms',
+        // url: 'http://localhost:8090/geoserver/wms',
+        // url: 'http://localhost:8090/geoserver/gwc/service/wms',
+        url: 'http://dev.chinadci.com:8115/geoserver/gwc/service/wms',
+        url: 'http://dev.chinadci.com:8115/geoserver/wms',
+        params: {
+          LAYERS: 'GXCurrenttopography:BE',
+          // 'SRS': 'EPSG:4524'
+          SRS: '4524',
+          format: 'image/png'
+        },
+        serverType: 'geoserver'
+      })
+    });
+
+    map.addLayer(baseLayer);
+  </script>
+</body>
+
+</html>

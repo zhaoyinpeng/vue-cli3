@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+  <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+  <script src="./js/proj4.js"></script>
+</head>
+
+<body>
+  <div id="map" class="map" style="height: 693px;"></div>
+  <script>
+    proj4.defs("EPSG:4490", "+proj=longlat +ellps=GRS80 +no_defs");
+    // proj4.register(proj4)
+    var projection = ol.proj.get('EPSG:4490');//设置坐标系
+    // var projectionExtent = projection.getExtent();
+    // var projectionExtent = [104.446173906, 20.8934573829, 112.057633996, 26.3878914714]
+    var projectionExtent = [-180, -90, 180, 90]
+    projection.setExtent(projectionExtent)
+    //分辨率
+    var resolutions = [
+      1.40625,
+      0.703125,
+      0.3515625,
+      0.17578125,
+      0.087890625,
+      0.0439453125,
+      0.02197265625,
+      0.010986328125,
+      0.0054931640625,
+      0.00274658203125,
+      0.001373291015625,
+      0.0006866455078125,
+      0.00034332275390625,
+      0.000171661376953125,
+      0.0000858306884765625,
+      0.00004291534423828125,
+      0.000021457672119140625,
+      0.000010728836059570312,
+      0.000005364418029785156,
+      0.000002682209014892578,
+      0.000001341104507446289
+    ];
+    //瓦片矩阵
+    var matrixIds = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20];
+
+    var centerXY = "108.54449462890625,22.875946044921875";//地图中心点，默认南宁
+    var center = ReturnCenter(centerXY);
+
+    var emap_attributions = new ol.Attribution({
+      html: '<span class="span_switch" onclick="ChangeToImgMap()">点击切换地图类型</span>'
+    });
+    function EMap() {
+      var map = new ol.Map({
+        controls: ol.control.defaults({
+          attribution: false
+        }).extend([
+          new ol.control.MousePosition()//是否显示鼠标所在地图点的经纬度
+        ]),
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.WMTS({
+              attributions: emap_attributions,
+              name: "广西影像",
+              url: "http://www.mapgx.com/ime-server/rest/tdtgx_img/wmts?tk=0981c8c278a57df3470711a6ac17b9b1",
+              layer: "tdtgx_img",
+              style: "default",
+              // matrixSet: "TileMatrixSet0",
+              format: "image/png",
+              wrapX: true,
+              tileGrid: new ol.tilegrid.WMTS({
+                origin: ol.extent.getTopLeft(projectionExtent),
+                resolutions: resolutions.slice(0, 20),
+                matrixIds: matrixIds.slice(0, 20)
+              })
+            }),
+            maxResolution: resolutions[0],//指定当前级数的上一级来平滑过渡，否则滚轮缩放当前级数会显示空白
+            minResolution: resolutions[20]
+          }),
+          new ol.layer.Tile({
+            source: new ol.source.WMTS({
+              attributions: emap_attributions,
+              name: "广西影像",
+              url: "http://t0.tianditu.gov.cn/cia_w/wmts?tk=0981c8c278a57df3470711a6ac17b9b1",
+              layer: "cia",
+              style: "default",
+              // matrixSet: "TileMatrixSet0",
+              format: "image/png",
+              wrapX: true,
+              tileGrid: new ol.tilegrid.WMTS({
+                origin: ol.extent.getTopLeft(projectionExtent),
+                resolutions: resolutions.slice(0, 20),
+                matrixIds: matrixIds.slice(0, 20)
+              })
+            }),
+            maxResolution: resolutions[0],//指定当前级数的上一级来平滑过渡，否则滚轮缩放当前级数会显示空白
+            minResolution: resolutions[20]
+          })
+        ],
+        target: "map",
+        view: new ol.View({
+          center: center,//地图中心点
+          projection: projection,//投影类别
+          zoom: 10,//默认缩放级别
+          maxZoom: 20,//最大缩放级别
+          minZoom: 1//最小缩放级别
+        })
+      });
+
+      //鼠标点击时设置中心点覆盖物
+      GetElementId("map").onclick = function () {
+        coordinates = GetElementsByClassName('ol-mouse-position')[0].innerHTML;
+        SetPosition(map, coordinates);
+      };
+    }
+
+    EMap();//显示E电子地图
+
+    function GetElementId(id) {
+      return document.getElementById(id);
+    }
+    function GetElementsByClassName(className) {
+      return document.getElementsByClassName(className);
+    }
+    //中心点处理
+    function ReturnCenter(centerXY) {
+      var centerObj = centerXY.split(',');
+      var centerX = centerObj[0];
+      var centerY = centerObj[1];
+      return [parseFloat(centerX), parseFloat(centerY)];//一定要转换下类型，否则拖拽后，地图就消失了
+    }
+    //设置中心点覆盖物
+    function SetPosition(map, coordinates) {
+      GetElementId("Coordinates").value = coordinates;
+
+      var newcenter = ReturnCenter(coordinates);
+      // Position marker
+      var marker = new ol.Overlay({
+        position: newcenter,
+        positioning: 'bottom-center',
+        element: document.getElementById('marker'),
+        stopEvent: false
+      });
+      map.addOverlay(marker);
+    }
+  </script>
+</body>
+
+</html>

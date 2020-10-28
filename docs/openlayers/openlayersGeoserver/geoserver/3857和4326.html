@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title></title>
+  <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+  <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+  <script src="./proj4.js"></script>
+</head>
+
+<body>
+  <div id="map" class="map" style="height: 493px;"></div>
+  <select name="" id="se">
+    <option value="谷歌影像">谷歌影像</option>
+    <option value="谷歌行政区">谷歌行政区</option>
+  </select>
+  <script>
+    let map = new ol.Map({
+      controls: ol.control.defaults({
+        attribution: false
+      }).extend([
+        new ol.control.MousePosition()//是否显示鼠标所在地图点的经纬度
+      ]),
+      layers: [
+        new ol.layer.Tile({
+          source: new ol.source.TileWMS({
+            url: 'http://dev.chinadci.com:8115/geoserver/CityThroRiver/ows?service=WMS&version=1.1.1&request=GetMap&layers=CityThroRiver%3ACityThroRiver&outputFormat=image%2Fpng&tiled=true&exceptions=application/vnd.ogc.se_inimage&width=256&height=256',
+            projection: projection4524
+            // resolutions: resolutions4490
+          }),
+          crossOrigin: [36140120.04743978, 2923331.914514997]
+        })
+      ],
+      target: "map",
+      view: new ol.View({
+        projection: 'EPSG:3857',
+        center: [0, 0],
+        zoom: 2,//默认缩放级别
+      })
+    });
+    //普通4326
+    var layers = new ol.layer.Tile({
+      source: new ol.source.TileWMS({
+        url: 'https://ahocevar.com/geoserver/wms',
+        params: {
+          'LAYERS': 'ne:NE1_HR_LC_SR_W_DR',
+          'TILED': true
+        }
+      })
+    });
+    // map.addLayer(layers)
+    //谷歌影像
+    let rootLayer = new ol.layer.Tile({
+      source: new ol.source.TileImage({
+        url: 'http://mt2.google.cn/vt/lyrs=y&hl=zh-CN&gl=CN&src=app&x={x}&y={y}&z={z}&s=G'
+      }),
+      // visible: false
+    });
+    map.addLayer(rootLayer)
+    //谷歌行政区划
+    var googleMapLayer = new ol.layer.Tile({
+      source: new ol.source.XYZ({
+        url: 'http://www.google.cn/maps/vt/pb=!1m4!1m3!1i{z}!2i{x}!3i{y}!2m3!1e0!2sm!3i345013117!3m8!2szh-CN!3scn!5e1105!12m4!1e68!2m2!1sset!2sRoadmap!4e0'
+      }),
+      visible: false
+    });
+    map.addLayer(googleMapLayer)
+
+    let $select = document.getElementById('se')
+    $select.onchange = function () {
+      rootLayer.setVisible(false)
+      googleMapLayer.setVisible(false)
+      if ($select.value === '谷歌影像') {
+        rootLayer.setVisible(true)
+      } else if ($select.value === '谷歌行政区') {
+        googleMapLayer.setVisible(true)
+      }
+    }
+
+  </script>
+</body>
+
+</html>

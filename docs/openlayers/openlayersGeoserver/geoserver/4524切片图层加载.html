@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link
+      rel="stylesheet"
+      href="https://openlayers.org/en/v4.6.5/css/ol.css"
+      type="text/css"
+    />
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <script src="./js/proj4.js"></script>
+  </head>
+
+  <body>
+    <div id="map" class="map" style="height: 693px;"></div>
+    <script>
+      proj4.defs(
+        "EPSG:4524",
+        "+proj=tmerc +lat_0=0 +lon_0=108 +k=1 +x_0=36500000 +y_0=0 +ellps=GRS80 +units=m +no_defs"
+      );
+      var projection4524 = ol.proj.get("EPSG:4524"); //设置坐标系
+      // var projectionExtent4524 = [
+      //   36140120.04743978,
+      //   2324070.2608569125,
+      //   36911721.28242337,
+      //   2923331.914514997
+      // ];
+      var projectionExtent4524 = [36341298.828055754,2012011.4152050265,36658701.171944246,4704933.893404148]
+      projection4524.setExtent(projectionExtent4524);
+      var resolutions4524 = [
+        1314.9035538081646,
+        657.4517769040823,
+        328.72588845204115,
+        164.36294422602057,
+        82.18147211301029,
+        41.09073605650514,
+        20.54536802825257,
+        10.272684014126286,
+        5.136342007063143,
+        2.5681710035315715,
+        1.2840855017657857,
+        0.6420427508828929,
+        0.3210213754414464
+      ];
+      //设置地图投影
+      var projection4524 = new ol.proj.Projection({
+        code: "EPSG:4524",
+        units: "m",
+        axisOrientation: "neu",
+        extent: projectionExtent4524,
+        global: false
+      });
+      var center4524 = [36525920.66493157, 2623701.0876859548];
+
+
+      //4524底图图层
+      var layer = new ol.layer.Vector({
+        source: new ol.source.Vector({
+          projection: projection4524,
+          format: new ol.format.GeoJSON(),
+          url:
+            "http://dev.chinadci.com:8115/geoserver/AdministrativeDivision/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=AdministrativeDivision%3AAdministrativeDivision&outputFormat=application%2Fjson"
+        })
+      });
+      var map = new ol.Map({
+        controls: ol.control
+          .defaults({
+            attribution: false
+          })
+          .extend([
+            new ol.control.MousePosition() //是否显示鼠标所在地图点的经纬度
+          ]),
+        layers: [layer],
+        target: "map",
+        view: new ol.View({
+          center: center4524,
+          projection: projection4524,
+          resolutions: resolutions4524,
+          zoom: 0, //默认缩放级别
+          // maxZoom: 20, //最大缩放级别
+          // minZoom: 0 //最小缩放级别
+        })
+      });
+      let tileLayer = new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+          url: "http://localhost:8090/geoserver/cite/ows?service=WMS&version=1.1.1&request=GetMap&layers=cite%3AdemEPSG4524&outputFormat=image%2Fpng&tiled=true&exceptions=application/vnd.ogc.se_inimage&width=256&height=256",
+          projection: projection4524
+        })
+        // crossOrigin: [36140120.04743978, 2923331.914514997]
+      });
+      // WMS
+      // var landtile = new ol.layer.Tile({
+      //   source: new ol.source.WMTS({
+      //     url: "http://localhost:8090/geoserver/gwc/service/wmts",
+      //     params: {
+      //       LAYERS: "cite:demEPSG4524",
+      //       SRS: "EPSG:4524"
+      //     },
+      //     serverType: "geoserver"
+      //     // projection: projection4524
+      //   })
+      // });
+      // map.addLayer(tileLayer);
+      //准备加载wmts服务
+      var gridNames = [
+        "EPSG:4524:0",
+        "EPSG:4524:1",
+        "EPSG:4524:2",
+        "EPSG:4524:3",
+        "EPSG:4524:4",
+        "EPSG:4524:5",
+        "EPSG:4524:6"
+      ];
+
+      //定义一个瓦片图层
+      var landtile = new ol.layer.Tile({
+        source: new ol.source.WMTS({
+          //服务地址
+          url: "http://localhost:8090/geoserver/gwc/service/wmts",
+          // layer: "cite:demEPSG4524",
+          layer: "webgis:nljdem2",
+          //切片集
+          matrixSet: "EPSG:4524",
+          format: "image/png",
+          projection: projection4524,
+          //切片信息
+          tileGrid: new ol.tilegrid.WMTS({
+            tileSize: [256, 256],
+            // extent: [36595400.33220091,2385209.5445702355,36749803.12933696,2545574.4299125327], //范围
+            // crossOrigin: [36595400.33220091, 2545574.4299125327],
+            extent: projectionExtent4524,
+            // crossOrigin: [projectionExtent4524[0],projectionExtent4524[3]],
+            resolutions: resolutions4524,
+            matrixIds: gridNames
+          })
+          // wrapX: false
+        })
+      });
+      map.addLayer(landtile);
+    </script>
+  </body>
+</html>

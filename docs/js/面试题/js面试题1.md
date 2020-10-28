@@ -121,7 +121,7 @@ getElementById() //通过元素 Id，唯一性
     解释：null 是一个只有一个值的数据类型，这个值就是 null。表示一个空指针对象，所以用 typeof 检测会返回”object”。
 23. \*判断字符串以字母开头，后面可以是数字，下划线，字母，长度为 6-30
     var reg=/^[a-zA-Z]\w{5,29}\$/;
-24. \*回答以下代码，alert 的值分别是多少？
+24. \**回答以下代码，alert 的值分别是多少？
     <script>
          var a = 100;  
          function test(){  
@@ -178,7 +178,7 @@ null 表示"没有对象"，即该处不应该有值。典型用法是：
 
 共同点：与服务器的无刷新传递消息、用户离线和在线状态、操作 DOM
 
-30. \*写一个获取非行间样式的函数
+30. \**写一个获取非行间样式的函数
     function getStyle(obj,attr) {
     if(obj.currentStyle) {
     return obj.currentStyle[attr];
@@ -270,7 +270,7 @@ xhr.onreadystatechange =function(){}
 
 (3)JSON 的语法表示三种类型值，简单值(字符串，数值，布尔值，null),数组，对象
 
-42. \*js 中的 3 种弹出式消息提醒（警告窗口，确认窗口，信息输入窗口）的命令式什么？
+42. \**js 中的 3 种弹出式消息提醒（警告窗口，确认窗口，信息输入窗口）的命令式什么？
     alert
     confirm
     prompt
@@ -278,9 +278,9 @@ xhr.onreadystatechange =function(){}
 43. 以下代码执行结果
     var uname = 'jack'
     function change() {
-    alert(uname) // ?
-    var uname = 'lily'
-    alert(uname) //?
+        alert(uname) // ?
+        var uname = 'lily'
+        alert(uname) //?
     }
     change()
     分别 alert 出 undefined，lily，（变量声明提前问题）
@@ -302,7 +302,7 @@ document.documentElement.clientWidth 可视区宽度，不包含滚动条宽度
 
 document.documentElement.clientHeight 可视区高度，不包含滚动条宽度
 
-46. \*节点的种类有几种，分别是什么？
+46. \**节点的种类有几种，分别是什么？
     (1)元素节点：nodeType ===1;
 
 (2)文本节点：nodeType ===3;
@@ -550,12 +550,12 @@ var iDate =iS
     3、外部 js、css 文件放在最底下
     4、减少 dom 操作，尽可能用变量替代不必要的 dom 操作
 
-68. \*什么是 FOUC？你如何来避免 FOUC？
+68. \**什么是 FOUC？你如何来避免 FOUC？
     FOUC 即无样式内容闪烁（Flash Of Unstyled Content）
     由于 css 引入使用了@import 或者存在多个 style 标签以及 css 文件在页面底部引入使得 css 文件加载在 html 之后导致页面闪烁、花屏
     用 link 加载 css 文件，放在 head 标签里面
 
-69. \*文档类型的作用是什么？你知道多少种文档类型？
+69. \**文档类型的作用是什么？你知道多少种文档类型？
     影响浏览器对 html 代码的编译渲染
     html2.0
     xHtml(更严格的 html)
@@ -710,6 +710,11 @@ A.prototype = {
 }
 这个问题的关注点是 B 继承的 A 的静态属性，同时 B 的原型链中不存在 A 实例的 titleName 属性
 
+function B(num,num2){
+    A.call(this,num)
+    this.num2 = num2
+}
+B.prototype = new A()
 82. 什么是虚拟 dom
 React 为啥这么大？因为它实现了一个虚拟 DOM（Virtual DOM）。虚拟 DOM 是干什么的？这就要从浏览器本身讲起
 
@@ -958,6 +963,7 @@ sessionStorage 仅在当前会话下有效，关闭页面或浏览器后被清�
 https://zhuanlan.zhihu.com/p/...
 
 106. 按需加载路由怎么加载对应的 chunk 文件的？换句话说浏览器怎么知道什么时候加载这个 chunk，以及 webpack 是怎么识别那个多个经过 hash 过的 chunk 文件
+
 107. get 和 post 有什么区别？get 可以通过 body 传递数据吗
 把数据放到 body 里面，必须用 POST 方式取，这是 HTTP 协议限制的。
 
@@ -1123,10 +1129,10 @@ return \_this.apply(context, args.concat(thisArgs))
 }
 // ES6 写法 感谢 waterc 的提出
 Function.prototype.bind = function(context, ...res) {
-let self = this
-return function(...arg) {
-return self.apply(context, [...res,...arg])
-}
+    let self = this
+    return function(...arg) {
+        return self.apply(context, [...res,...arg])
+    }
 }
 119. 多个函数
 var a = (function(){return '1';}, function(){return 1;})();
