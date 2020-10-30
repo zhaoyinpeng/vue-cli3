@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title></title>
+    <link
+      rel="stylesheet"
+      href="https://openlayers.org/en/v4.6.5/css/ol.css"
+      type="text/css"
+    />
+    <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+    <script src="./js/proj4.js"></script>
+  </head>
+
+  <body>
+    <div id="map" class="map" style="height: 693px;"></div>
+    <script>
+      proj4.defs(
+        'EPSG:4547', '+proj=tmerc +lat_0=0 +lon_0=114 +k=1 +x_0=500000 +y_0=0 +ellps=GRS80 +units=m +no_defs'
+      );
+      // var projection4547 = ol.proj.get("EPSG:4547"); //设置坐标系
+      var projectionExtent4547 = [412692.5427000001, 2456655.1438999996, 461859.5175000001, 2519895.1865]
+      // projection4547.setExtent(projectionExtent4547);
+      //设置地图投影
+      var projection4547 = new ol.proj.Projection({
+        code: "EPSG:4547",
+        units: "m",
+        axisOrientation: "neu",
+        extent: projectionExtent4547,
+        global: false
+      });
+      var center4547 = [427512.70704,2499934.13018];
+
+
+      //4547底图图层
+      // var layer = new ol.layer.Vector({
+      //   source: new ol.source.Vector({
+      //     projection: projection4547,
+      //     format: new ol.format.GeoJSON(),
+      //     url:
+      //       "http://dev.chinadci.com:8115/geoserver/AdministrativeDivision/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=AdministrativeDivision%3AAdministrativeDivision&outputFormat=application%2Fjson"
+      //   })
+      // });
+      let tileLayer = new ol.layer.Tile({
+        source: new ol.source.TileWMS({
+          url: "http://172.26.156.142:8080/geoserver/zhongshan_pg/ows?service=WMS&version=1.1.1&request=GetMap&layers=zhongshan_pg:XZQH_ZQJ&outputFormat=image%2Fpng&tiled=true&exceptions=application/vnd.ogc.se_inimage&width=256&height=256",
+          projection: projection4547
+        })
+        // crossOrigin: [36140120.04743978, 2923331.914514997]
+      });
+      var map = new ol.Map({
+        controls: ol.control
+          .defaults({
+            attribution: false
+          })
+          .extend([
+            new ol.control.MousePosition() //是否显示鼠标所在地图点的经纬度
+          ]),
+        layers: [tileLayer],
+        target: "map",
+        view: new ol.View({
+          center: center4547,
+          projection: projection4547,
+          zoom: 0, //默认缩放级别
+          // maxZoom: 20, //最大缩放级别
+          // minZoom: 0 //最小缩放级别
+        })
+      });
+    </script>
+  </body>
+</html>
