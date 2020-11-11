@@ -1,4 +1,5 @@
 const webpack = require('webpack')
+const FileListPlugin = require('./src/webpackPlugin/helloWorld')
 module.exports = {
   // 输出文件目录
   outputDir: 'dist',
@@ -15,7 +16,8 @@ module.exports = {
         $: 'jquery',
         jQuery: 'jquery',
         'windows.jQuery': 'jquery'
-      })
+      }),
+      new FileListPlugin()
     ]
   },
   // 生产环境是否生成 sourceMap 文件

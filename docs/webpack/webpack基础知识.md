@@ -103,6 +103,7 @@ module: {
       exclude: /\.(css|js|html|less)$/,
       loader: 'file-loader',
       options: {
+        //打包的hash名称太长，截取10位
         name: '[hash:10].[ext]'
       }
     }
