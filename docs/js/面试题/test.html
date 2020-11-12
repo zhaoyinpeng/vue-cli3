@@ -4,13 +4,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
+    <style>
+      div {
+        width: 100px;
+        height: 100px;
+        border: 1px solid rebeccapurple;
+      }
+    </style>
   </head>
   <body>
+    <div id="a">
+      a
+    </div>
+    <div id="b">
+      b
+    </div>
     <script>
       function Foo(e) {
         this.name = "Foo";
         this.age = e;
-        return {} //构造函数中如果return了对象，会影响实例，此时实例为{}
+        return {}; //构造函数中如果return了对象，会影响实例，此时实例为{}
       }
       /**
        * @msg: newFactory
@@ -24,10 +37,20 @@
         obj.__proto__ = Constructor.prototype; //5.实现实例的隐式原型指向构造函数的显示原型
         const ret = Constructor.apply(obj, arguments); //4.将构造函数中的属性和方法复制给obj对象
         // return obj; //2.返回对象
-        return typeof ret === 'object' ? ret : obj; //6.如果上面调用的构造函数返回了对象，则直接返回这个对象
+        return typeof ret === "object" ? ret : obj; //6.如果上面调用的构造函数返回了对象，则直接返回这个对象
       }
       console.log(new Foo(18));
       console.log(newFactory(Foo, 18));
+
+      let a = document.getElementById("a");
+      let b = document.getElementById("b");
+      a.onclick = function(e) {
+        console.log("a", e);
+        b.onclick.call(this, e);
+      };
+      b.onclick = function(e) {
+        console.log("b", e);
+      };
     </script>
   </body>
 </html>

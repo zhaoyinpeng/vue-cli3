@@ -257,3 +257,48 @@ meta 标签用于描述网页的元信息，如网站作者、描述、关键词
     name="viewport" 
     content="width=device-width, initial-scale=1, maximum-scale=1"
 >
+
+1. 先写一个题，一个长度为 n 的数组，求出其中 m 个项组成的全排列
+2. 移动端 click 延迟的原因
+
+- 1.控制浏览器宽度不让他进行缩放操作 2.使用 fastClick（原理是监听 touchstart 和 touchend 事件）
+
+3. 词法分析变成抽象语法书的原因
+4. http 能取消吗？如何取消？
+
+- 能 abort()
+
+5. promise 如何取消？
+
+- 直接调用 reject
+- 使用 promise.race
+
+  6.co 模块内部是如何运行的？
+
+7. await 内部的原理？
+
+- async/await 会被编译成 generator+promise 的语法代码
+
+  8.双向数据绑定 
+9. 写代码，两个数组的交集，并集 
+```
+var a = [1,2,3,4,5]
+var b = [2,4,6,8,10]
+//交集
+var c = a.filter(function(v){ return b.indexOf(v) > -1 })
+//差集
+var d = a.filter(function(v){ return b.indexOf(v) == -1 })
+//补集
+var e = a.filter(function(v){ return !(b.indexOf(v) > -1) })
+ .concat(b.filter(function(v){ return !(a.indexOf(v) > -1)}))
+//并集
+var f = a.concat(b.filter(function(v){ return !(a.indexOf(v) > -1)}));
+console.log("数组a：", a);
+console.log("数组b：", b);
+console.log("a与b的交集：", c);
+console.log("a与b的差集：", d);
+console.log("a与b的补集：", e);
+console.log("a与b的并集：", f);
+
+```
+10.讲一个印象最深的你封装的组件
